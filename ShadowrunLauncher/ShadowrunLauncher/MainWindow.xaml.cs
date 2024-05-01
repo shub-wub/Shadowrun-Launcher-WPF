@@ -18,6 +18,8 @@ namespace ShadowrunLauncher
             InitializeComponent();
             closeButton.PreviewMouseLeftButtonDown += CloseButton_PreviewMouseLeftButtonDown;
             closeButton.PreviewMouseLeftButtonUp += CloseButton_PreviewMouseLeftButtonUp;
+            closeButton.MouseEnter += CloseButton_MouseEnter;
+            closeButton.MouseLeave += CloseButton_MouseLeave;
             MouseLeftButtonDown += MainWindow_MouseLeftButtonDown;
             MouseMove += MainWindow_MouseMove;
             MouseLeftButtonUp += MainWindow_MouseLeftButtonUp;
@@ -56,6 +58,22 @@ namespace ShadowrunLauncher
                 // Close the application
                 Application.Current.Shutdown();
             }
+        }
+
+        private void CloseButton_MouseEnter(object sender, MouseEventArgs e)
+        {
+            // Change the image source to the highlighted version
+            Uri uri = new Uri("pack://application:,,,/Images/close_button_highlight.png");
+            BitmapImage bitmap = new BitmapImage(uri);
+            closeImage.Source = bitmap;
+        }
+
+        private void CloseButton_MouseLeave(object sender, MouseEventArgs e)
+        {
+            // Reset the image source to the default version
+            Uri uri = new Uri("pack://application:,,,/Images/close_button.png");
+            BitmapImage bitmap = new BitmapImage(uri);
+            closeImage.Source = bitmap;
         }
 
         private void MainWindow_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
