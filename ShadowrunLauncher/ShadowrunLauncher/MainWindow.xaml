@@ -5,8 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ShadowrunLauncher"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-
+        Title="ShadowrunLauncher" Height="550" Width="730" WindowStyle="None" ResizeMode="NoResize">
+    <Grid Width="730" Height="550">
+        <Image HorizontalAlignment="Center" Height="550" VerticalAlignment="Center" Width="730" Source="\Images\BG.png"/>
+        <Image HorizontalAlignment="Left" Height="300" Margin="354,125,0,0" VerticalAlignment="Top" Width="300" Source="/Images/circle_05.png"/>
+        <Image HorizontalAlignment="Left" Height="300" Margin="354,125,0,0" VerticalAlignment="Top" Width="300" Source="/Images/circle_04.png"/>
+        <Image HorizontalAlignment="Left" Height="300" Margin="354,125,0,0" VerticalAlignment="Top" Width="300" Source="/Images/circle_03.png"/>
+        <Image HorizontalAlignment="Left" Height="300" Margin="354,125,0,0" VerticalAlignment="Top" Width="300" Source="/Images/circle_02.png"/>
+        <Image HorizontalAlignment="Left" Height="300" Margin="354,125,0,0" VerticalAlignment="Top" Width="300" Source="/Images/circle_01.png"/>
     </Grid>
 </Window>
