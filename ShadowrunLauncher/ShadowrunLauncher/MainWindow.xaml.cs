@@ -23,6 +23,17 @@ namespace ShadowrunLauncher
             MouseLeftButtonDown += MainWindow_MouseLeftButtonDown;
             MouseMove += MainWindow_MouseMove;
             MouseLeftButtonUp += MainWindow_MouseLeftButtonUp;
+
+            // Add the new button event handlers
+            questionButton.PreviewMouseLeftButtonDown += QuestionButton_PreviewMouseLeftButtonDown;
+            questionButton.PreviewMouseLeftButtonUp += QuestionButton_PreviewMouseLeftButtonUp;
+            questionButton.MouseEnter += QuestionButton_MouseEnter;
+            questionButton.MouseLeave += QuestionButton_MouseLeave;
+
+            minimizeButton.PreviewMouseLeftButtonDown += MinimizeButton_PreviewMouseLeftButtonDown;
+            minimizeButton.PreviewMouseLeftButtonUp += MinimizeButton_PreviewMouseLeftButtonUp;
+            minimizeButton.MouseEnter += MinimizeButton_MouseEnter;
+            minimizeButton.MouseLeave += MinimizeButton_MouseLeave;
         }
 
         private void CloseButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -103,6 +114,117 @@ namespace ShadowrunLauncher
             {
                 isDragging = false;
             }
+        }
+
+        private void QuestionButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            // Change the image source to the clicked version
+            Uri uri = new Uri("pack://application:,,,/Images/question_button_clicked.png");
+            BitmapImage bitmap = new BitmapImage(uri);
+            questionImage.Source = bitmap;
+
+            // Reduce scale of the image from the center
+            ScaleTransform scaleTransform = new ScaleTransform(0.9, 0.9); // Scale factor (0.95) can be adjusted
+            questionImage.RenderTransform = scaleTransform;
+
+            // Optionally, you can add an animation for a smooth effect
+            DoubleAnimation animation = new DoubleAnimation(1.0, 0.9, TimeSpan.FromSeconds(0.1)); // Duration (0.2 seconds) can be adjusted
+            scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, animation);
+            scaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, animation);
+        }
+
+        private void QuestionButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            // Reset the image source and scale of the question button
+            Uri uri = new Uri("pack://application:,,,/Images/question_button.png");
+            BitmapImage bitmap = new BitmapImage(uri);
+            questionImage.Source = bitmap;
+            ScaleTransform scaleTransform = new ScaleTransform(1, 1);
+            questionImage.RenderTransform = scaleTransform;
+
+            // Open the specified link in the default web browser if the mouse was released within the button bounds
+            Point position = e.GetPosition(questionButton);
+            if (position.X >= 0 && position.Y >= 0 && position.X < questionButton.ActualWidth && position.Y < questionButton.ActualHeight)
+            {
+                try
+                {
+                    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                    {
+                        FileName = "https://github.com/shub-wub/Shadowrun-Launcher-WPF",
+                        UseShellExecute = true
+                    });
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error opening link: " + ex.Message);
+                }
+            }
+        }
+
+        private void QuestionButton_MouseEnter(object sender, MouseEventArgs e)
+        {
+            // Change the image source to the highlighted version
+            Uri uri = new Uri("pack://application:,,,/Images/question_button_highlight.png");
+            BitmapImage bitmap = new BitmapImage(uri);
+            questionImage.Source = bitmap;
+        }
+
+        private void QuestionButton_MouseLeave(object sender, MouseEventArgs e)
+        {
+            // Reset the image source to the default version
+            Uri uri = new Uri("pack://application:,,,/Images/question_button.png");
+            BitmapImage bitmap = new BitmapImage(uri);
+            questionImage.Source = bitmap;
+        }
+
+        private void MinimizeButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            // Change the image source to the clicked version
+            Uri uri = new Uri("pack://application:,,,/Images/minimize_button_clicked.png");
+            BitmapImage bitmap = new BitmapImage(uri);
+            minimizeImage.Source = bitmap;
+
+            // Reduce scale of the image from the center
+            ScaleTransform scaleTransform = new ScaleTransform(0.9, 0.9); // Scale factor (0.95) can be adjusted
+            minimizeImage.RenderTransform = scaleTransform;
+
+            // Optionally, you can add an animation for a smooth effect
+            DoubleAnimation animation = new DoubleAnimation(1.0, 0.9, TimeSpan.FromSeconds(0.1)); // Duration (0.2 seconds) can be adjusted
+            scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, animation);
+            scaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, animation);
+        }
+
+        private void MinimizeButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            // Reset the image source and scale of the minimize button
+            Uri uri = new Uri("pack://application:,,,/Images/minimize_button.png");
+            BitmapImage bitmap = new BitmapImage(uri);
+            minimizeImage.Source = bitmap;
+            ScaleTransform scaleTransform = new ScaleTransform(1, 1);
+            minimizeImage.RenderTransform = scaleTransform;
+
+            // Minimize the window if the mouse was released within the button bounds
+            Point position = e.GetPosition(minimizeButton);
+            if (position.X >= 0 && position.Y >= 0 && position.X < minimizeButton.ActualWidth && position.Y < minimizeButton.ActualHeight)
+            {
+                WindowState = WindowState.Minimized;
+            }
+        }
+
+        private void MinimizeButton_MouseEnter(object sender, MouseEventArgs e)
+        {
+            // Change the image source to the highlighted version
+            Uri uri = new Uri("pack://application:,,,/Images/minimize_button_highlight.png");
+            BitmapImage bitmap = new BitmapImage(uri);
+            minimizeImage.Source = bitmap;
+        }
+
+        private void MinimizeButton_MouseLeave(object sender, MouseEventArgs e)
+        {
+            // Reset the image source to the default version
+            Uri uri = new Uri("pack://application:,,,/Images/minimize_button.png");
+            BitmapImage bitmap = new BitmapImage(uri);
+            minimizeImage.Source = bitmap;
         }
     }
 }
