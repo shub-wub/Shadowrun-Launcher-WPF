@@ -20,5 +20,10 @@ namespace ShadowrunLauncher
         {
             InitializeComponent();
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            // Button click event handler
+        }
     }
 }

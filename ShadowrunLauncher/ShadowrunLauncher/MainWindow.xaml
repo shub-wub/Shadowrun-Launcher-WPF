@@ -8,10 +8,30 @@
         Title="ShadowrunLauncher" Height="550" Width="730" WindowStyle="None" ResizeMode="NoResize">
     <Grid Width="730" Height="550">
         <Image HorizontalAlignment="Center" Height="550" VerticalAlignment="Center" Width="730" Source="\Images\BG.png"/>
-        <Image HorizontalAlignment="Left" Height="300" Margin="354,125,0,0" VerticalAlignment="Top" Width="300" Source="/Images/circle_05.png"/>
-        <Image HorizontalAlignment="Left" Height="300" Margin="354,125,0,0" VerticalAlignment="Top" Width="300" Source="/Images/circle_04.png"/>
-        <Image HorizontalAlignment="Left" Height="300" Margin="354,125,0,0" VerticalAlignment="Top" Width="300" Source="/Images/circle_03.png"/>
-        <Image HorizontalAlignment="Left" Height="300" Margin="354,125,0,0" VerticalAlignment="Top" Width="300" Source="/Images/circle_02.png"/>
-        <Image HorizontalAlignment="Left" Height="300" Margin="354,125,0,0" VerticalAlignment="Top" Width="300" Source="/Images/circle_01.png"/>
+        <Image HorizontalAlignment="Left" Height="300" Margin="354,125,0,0" VerticalAlignment="Top" Width="300" Source="/Images/circle_05.png"
+               local:ImageProperties.RotationCenter="0.5,0.5"
+               local:ImageProperties.RotationDirection="Clockwise"
+               local:ImageProperties.RotationSpeed="2"
+               local:ImageProperties.IsRotating="True"/>
+        <Image HorizontalAlignment="Left" Height="300" Margin="354,125,0,0" VerticalAlignment="Top" Width="300" Source="/Images/circle_04.png"
+               local:ImageProperties.RotationCenter="0.5,0.5"
+               local:ImageProperties.RotationDirection="CounterClockwise"
+               local:ImageProperties.RotationSpeed="3"
+               local:ImageProperties.IsRotating="True"/>
+        <Image HorizontalAlignment="Left" Height="300" Margin="354,125,0,0" VerticalAlignment="Top" Width="300" Source="/Images/circle_03.png"
+               local:ImageProperties.RotationCenter="0.5,0.5"
+               local:ImageProperties.RotationDirection="Clockwise"
+               local:ImageProperties.RotationSpeed="2.5"
+               local:ImageProperties.IsRotating="True"/>
+        <Image HorizontalAlignment="Left" Height="300" Margin="354,125,0,0" VerticalAlignment="Top" Width="300" Source="/Images/circle_02.png"
+               local:ImageProperties.RotationCenter="0.5,0.5"
+               local:ImageProperties.RotationDirection="CounterClockwise"
+               local:ImageProperties.RotationSpeed="3.5"
+               local:ImageProperties.IsRotating="True"/>
+        <Image HorizontalAlignment="Left" Height="300" Margin="354,125,0,0" VerticalAlignment="Top" Width="300" Source="/Images/circle_01.png"
+               local:ImageProperties.RotationCenter="0.5,0.5"
+               local:ImageProperties.RotationDirection="Clockwise"
+               local:ImageProperties.RotationSpeed="4"
+               local:ImageProperties.IsRotating="True"/>
     </Grid>
 </Window>
