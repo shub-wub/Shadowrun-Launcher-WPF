@@ -7,32 +7,48 @@
         mc:Ignorable="d"
         Title="ShadowrunLauncher" Height="550" Width="730" WindowStyle="None" ResizeMode="NoResize">
     <Grid Width="730" Height="550">
+        <!-- Background image -->
         <Image HorizontalAlignment="Center" Height="550" VerticalAlignment="Center" Width="730" Source="\Images\BG.png"/>
-        <Image HorizontalAlignment="Left" Height="300" Margin="354,125,0,0" VerticalAlignment="Top" Width="300" Source="/Images/circle_05.png"
-               local:ImageProperties.RotationCenter="0.5,0.5"
-               local:ImageProperties.RotationDirection="Clockwise"
-               local:ImageProperties.RotationSpeed="2"
-               local:ImageProperties.IsRotating="True"/>
-        <Image HorizontalAlignment="Left" Height="300" Margin="354,125,0,0" VerticalAlignment="Top" Width="300" Source="/Images/circle_04.png"
-               local:ImageProperties.RotationCenter="0.5,0.5"
-               local:ImageProperties.RotationDirection="CounterClockwise"
-               local:ImageProperties.RotationSpeed="3"
-               local:ImageProperties.IsRotating="True"/>
-        <Image HorizontalAlignment="Left" Height="300" Margin="354,125,0,0" VerticalAlignment="Top" Width="300" Source="/Images/circle_03.png"
-               local:ImageProperties.RotationCenter="0.5,0.5"
-               local:ImageProperties.RotationDirection="Clockwise"
-               local:ImageProperties.RotationSpeed="2.5"
-               local:ImageProperties.IsRotating="True"/>
-        <Image HorizontalAlignment="Left" Height="300" Margin="354,125,0,0" VerticalAlignment="Top" Width="300" Source="/Images/circle_02.png"
-               local:ImageProperties.RotationCenter="0.5,0.5"
-               local:ImageProperties.RotationDirection="CounterClockwise"
-               local:ImageProperties.RotationSpeed="3.5"
-               local:ImageProperties.IsRotating="True"/>
-        <Image HorizontalAlignment="Left" Height="300" Margin="354,125,0,0" VerticalAlignment="Top" Width="300" Source="/Images/circle_01.png"
-               local:ImageProperties.RotationCenter="0.5,0.5"
-               local:ImageProperties.RotationDirection="Clockwise"
-               local:ImageProperties.RotationSpeed="4"
-               local:ImageProperties.IsRotating="True"/>
+
+        <!-- Mountain MG image-->
+        <Image HorizontalAlignment="Center" Height="550" VerticalAlignment="Center" Width="730" Source="\Images\mountainMG.png"/>
+
+        <!-- Frame Left Circle image-->
+        <Image HorizontalAlignment="Center" Height="550" VerticalAlignment="Center" Width="730" Source="\Images\frame_circle_left.png"/>
+
+        <!-- Frame Right Circle image-->
+        <Image HorizontalAlignment="Center" Height="550" VerticalAlignment="Center" Width="730" Source="\Images\frame_circle_right.png"/>
+
+        <!-- Top frame image -->
+        <Image HorizontalAlignment="Center" Height="550" VerticalAlignment="Center" Width="730" Source="\Images\frame_top.png"/>
+
+        <!-- Bottom frame image -->
+        <Image HorizontalAlignment="Center" Height="550" VerticalAlignment="Center" Width="730" Source="\Images\frame_bottom.png"/>
+
+        <!-- Shadowrun Logo-->
+        <Image HorizontalAlignment="Left" Height="53" VerticalAlignment="Top" Width="282" Source="\Images\logo_shadowrun.png" Margin="46,25,0,0"/>
+
+        <!-- Define your image -->
+        <Image x:Name="glowingImage" HorizontalAlignment="Center" Height="550" VerticalAlignment="Center" Width="730" Source="\Images\mountainMG_flicker.png"/>
+
+        <!-- Container for all circle images with clipping region -->
+        <Grid HorizontalAlignment="Left" Margin="354,125,0,0" VerticalAlignment="Top" Width="300" Height="300">
+            <Grid.Clip>
+                <!-- Define a single clipping region for all circle images -->
+                <RectangleGeometry Rect="-500,-14,1000,332.5"/>
+            </Grid.Clip>
+
+            <!-- Individual circle images -->
+            <Image Source="/Images/circle_05.png"
+                   local:ImageProperties.RotationCenter="0.5,0.5"
+                   local:ImageProperties.RotationDirection="Clockwise"
+                   local:ImageProperties.RotationSpeed="2"
+                   local:ImageProperties.IsRotating="True"/>
+
+            <!-- Add other circle images here -->
+
+        </Grid>
+
         <!-- Question Button -->
         <Button x:Name="questionButton" Width="25" Height="25" BorderThickness="0" Margin="550,-500,0,0" Background="Transparent" Padding="0">
             <Button.Template>
@@ -92,5 +108,23 @@
                 </Image.RenderTransformOrigin>
             </Image>
         </Button>
+
     </Grid>
+
+    <!-- Define the storyboard for the glowing effect -->
+    <Window.Resources>
+        <Storyboard x:Key="GlowAnimation" RepeatBehavior="Forever">
+            <!-- Fade in animation -->
+            <DoubleAnimation
+                Storyboard.TargetName="glowingImage"
+                Storyboard.TargetProperty="Opacity"
+                From="0" To="1" Duration="0:0:1"/>
+            <!-- Fade out animation -->
+            <DoubleAnimation
+                Storyboard.TargetName="glowingImage"
+                Storyboard.TargetProperty="Opacity"
+                From="1" To="0" Duration="0:0:5" BeginTime="0:0:5"/>
+        </Storyboard>
+    </Window.Resources>
+
 </Window>

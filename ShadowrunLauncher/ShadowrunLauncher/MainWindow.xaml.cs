@@ -16,6 +16,7 @@ namespace ShadowrunLauncher
         public MainWindow()
         {
             InitializeComponent();
+            StartGlowAnimation();
             closeButton.PreviewMouseLeftButtonDown += CloseButton_PreviewMouseLeftButtonDown;
             closeButton.PreviewMouseLeftButtonUp += CloseButton_PreviewMouseLeftButtonUp;
             closeButton.MouseEnter += CloseButton_MouseEnter;
@@ -34,6 +35,15 @@ namespace ShadowrunLauncher
             minimizeButton.PreviewMouseLeftButtonUp += MinimizeButton_PreviewMouseLeftButtonUp;
             minimizeButton.MouseEnter += MinimizeButton_MouseEnter;
             minimizeButton.MouseLeave += MinimizeButton_MouseLeave;
+        }
+
+        private void StartGlowAnimation()
+        {
+            Storyboard glowAnimation = (Storyboard)FindResource("GlowAnimation");
+            if (glowAnimation != null)
+            {
+                glowingImage.BeginStoryboard(glowAnimation);
+            }
         }
 
         private void CloseButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
