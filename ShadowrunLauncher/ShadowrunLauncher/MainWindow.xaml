@@ -5,6 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ShadowrunLauncher"
         mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
+        ContentRendered="Window_ContentRendered"
         Title="ShadowrunLauncher" Height="550" Width="730" WindowStyle="None" ResizeMode="NoResize">
     <Grid Width="730" Height="550">
         <!-- Background image -->
@@ -68,7 +70,6 @@
                    local:ImageProperties.RotationDirection="Clockwise"
                    local:ImageProperties.RotationSpeed="4"
                    local:ImageProperties.IsRotating="True"/>
-
         </Grid>
 
         <!-- Question Button -->
@@ -130,6 +131,9 @@
                 </Image.RenderTransformOrigin>
             </Image>
         </Button>
+        <Button Name="PlayButton" Content="test" HorizontalAlignment="Left" Margin="110,166,0,0" VerticalAlignment="Top" Click="PlayButtonClick">
+        </Button>
+        <Label Name="VersionText" Content="Version" HorizontalAlignment="Left" Margin="37,499,0,0" VerticalAlignment="Top" Foreground="White"/>
 
     </Grid>
 
@@ -148,5 +152,4 @@
                 From="1" To="0" Duration="0:0:5" BeginTime="0:0:5"/>
         </Storyboard>
     </Window.Resources>
-
 </Window>

@@ -5,6 +5,11 @@ using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Diagnostics;
+using System.IO;
+using System.ComponentModel;
+using System.Net;
+using ShadowrunLauncher.Logic;
 
 namespace ShadowrunLauncher
 {
@@ -12,6 +17,7 @@ namespace ShadowrunLauncher
     {
         private bool isDragging = false;
         private Point startPoint;
+        private InstallLogic _installLogic;
 
         public MainWindow()
         {
@@ -35,6 +41,18 @@ namespace ShadowrunLauncher
             minimizeButton.PreviewMouseLeftButtonUp += MinimizeButton_PreviewMouseLeftButtonUp;
             minimizeButton.MouseEnter += MinimizeButton_MouseEnter;
             minimizeButton.MouseLeave += MinimizeButton_MouseLeave;
+
+            _installLogic = new InstallLogic(this);
+        }
+
+        private void Window_ContentRendered(object sender, EventArgs e)
+        {
+            _installLogic.CheckForUpdates();
+        }
+
+        internal void PlayButtonClick(object sender, RoutedEventArgs e)
+        {
+            _installLogic.PlayButtonClickLogic(sender, e);
         }
 
         private void StartGlowAnimation()
