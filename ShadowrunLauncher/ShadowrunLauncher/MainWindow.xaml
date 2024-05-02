@@ -44,8 +44,30 @@
                    local:ImageProperties.RotationDirection="Clockwise"
                    local:ImageProperties.RotationSpeed="2"
                    local:ImageProperties.IsRotating="True"/>
+            
+            <Image Source="/Images/circle_04.png"
+                   local:ImageProperties.RotationCenter="0.5,0.5"
+                   local:ImageProperties.RotationDirection="CounterClockwise"
+                   local:ImageProperties.RotationSpeed="3"
+                   local:ImageProperties.IsRotating="True"/>
 
-            <!-- Add other circle images here -->
+            <Image Source="/Images/circle_03.png"
+                   local:ImageProperties.RotationCenter="0.5,0.5"
+                   local:ImageProperties.RotationDirection="Clockwise"
+                   local:ImageProperties.RotationSpeed="2.5"
+                   local:ImageProperties.IsRotating="True"/>
+
+            <Image Source="/Images/circle_02.png"
+                   local:ImageProperties.RotationCenter="0.5,0.5"
+                   local:ImageProperties.RotationDirection="CounterClockwise"
+                   local:ImageProperties.RotationSpeed="3.5"
+                   local:ImageProperties.IsRotating="True"/>
+
+            <Image Source="/Images/circle_01.png"
+                   local:ImageProperties.RotationCenter="0.5,0.5"
+                   local:ImageProperties.RotationDirection="Clockwise"
+                   local:ImageProperties.RotationSpeed="4"
+                   local:ImageProperties.IsRotating="True"/>
 
         </Grid>
 
