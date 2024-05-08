@@ -25,6 +25,11 @@ namespace ShadowrunLauncher
             MouseLeftButtonUp += MainWindow_MouseLeftButtonUp;
 
             // Buttons
+            playButton.PreviewMouseLeftButtonDown += PlayButton_PreviewMouseLeftButtonDown;
+            playButton.PreviewMouseLeftButtonUp += PlayButton_PreviewMouseLeftButtonUp;
+            playButton.MouseEnter += PlayButton_MouseEnter;
+            playButton.MouseLeave += PlayButton_MouseLeave;
+
             questionButton.PreviewMouseLeftButtonDown += QuestionButton_PreviewMouseLeftButtonDown;
             questionButton.PreviewMouseLeftButtonUp += QuestionButton_PreviewMouseLeftButtonUp;
             questionButton.MouseEnter += QuestionButton_MouseEnter;
@@ -47,11 +52,6 @@ namespace ShadowrunLauncher
         private void Window_ContentRendered(object sender, EventArgs e)
         {
             _installLogic.CheckForUpdates();
-        }
-
-        internal void PlayButtonClick(object sender, RoutedEventArgs e)
-        {
-            _installLogic.PlayButtonClickLogic(sender, e);
         }
 
         private void StartGlowAnimation()
@@ -90,6 +90,57 @@ namespace ShadowrunLauncher
             {
                 isDragging = false;
             }
+        }
+
+        private void PlayButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            // Change the image source to the clicked version
+            Uri uri = new Uri("pack://application:,,,/Images/button_generic_clicked.png");
+            BitmapImage bitmap = new BitmapImage(uri);
+            playImage.Source = bitmap;
+
+            // Reduce scale of the grid containing both the image and text from the center
+            ScaleTransform scaleTransform = new ScaleTransform(0.9, 0.9); // Scale factor (0.95) can be adjusted
+            playGrid.RenderTransform = scaleTransform;
+
+            // Optionally, you can add an animation for a smooth effect
+            DoubleAnimation animation = new DoubleAnimation(1.0, 0.9, TimeSpan.FromSeconds(0.1)); // Duration (0.2 seconds) can be adjusted
+            scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, animation);
+            scaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, animation);
+        }
+
+        private void PlayButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            // Reset the image source and scale of the play button
+            Uri uri = new Uri("pack://application:,,,/Images/button_generic.png");
+            BitmapImage bitmap = new BitmapImage(uri);
+            playImage.Source = bitmap;
+            ScaleTransform scaleTransform = new ScaleTransform(1, 1);
+            playGrid.RenderTransform = scaleTransform;
+
+            // Check if the mouse was released within the bounds of the play button
+            Point position = e.GetPosition(playButton);
+            if (position.X >= 0 && position.Y >= 0 && position.X < playButton.ActualWidth && position.Y < playButton.ActualHeight)
+            {
+                // Play the application
+                _installLogic.PlayButtonClickLogic(sender, e);
+            }
+        }
+
+        private void PlayButton_MouseEnter(object sender, MouseEventArgs e)
+        {
+            // Change the image source to the highlighted version
+            Uri uri = new Uri("pack://application:,,,/Images/button_generic_highlight.png");
+            BitmapImage bitmap = new BitmapImage(uri);
+            playImage.Source = bitmap;
+        }
+
+        private void PlayButton_MouseLeave(object sender, MouseEventArgs e)
+        {
+            // Reset the image source to the default version
+            Uri uri = new Uri("pack://application:,,,/Images/button_generic.png");
+            BitmapImage bitmap = new BitmapImage(uri);
+            playImage.Source = bitmap;
         }
 
         private void CloseButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)

@@ -333,9 +333,9 @@ namespace ShadowrunLauncher.Logic
                 }
 
                 // Update only the TextBlock text of the PlayButton
-                _mainWindow.PlayButton.Dispatcher.Invoke(() =>
+                _mainWindow.playButton.Dispatcher.Invoke(() =>
                 {
-                    ((TextBlock)((Grid)_mainWindow.PlayButton.Content).Children[1]).Text = buttonText;
+                    ((TextBlock)((Grid)_mainWindow.playButton.Content).Children[1]).Text = buttonText;
                 });
             }
         }
