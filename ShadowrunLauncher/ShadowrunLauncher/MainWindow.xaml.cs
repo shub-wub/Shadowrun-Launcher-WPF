@@ -19,31 +19,14 @@ namespace ShadowrunLauncher
         public MainWindow()
         {
             InitializeComponent();
+            buttonHandler handler = new buttonHandler();
             StartGlowAnimation();
             MouseLeftButtonDown += MainWindow_MouseLeftButtonDown;
             MouseMove += MainWindow_MouseMove;
             MouseLeftButtonUp += MainWindow_MouseLeftButtonUp;
 
             // Buttons
-            playButton.PreviewMouseLeftButtonDown += PlayButton_PreviewMouseLeftButtonDown;
-            playButton.PreviewMouseLeftButtonUp += PlayButton_PreviewMouseLeftButtonUp;
-            playButton.MouseEnter += PlayButton_MouseEnter;
-            playButton.MouseLeave += PlayButton_MouseLeave;
 
-            questionButton.PreviewMouseLeftButtonDown += QuestionButton_PreviewMouseLeftButtonDown;
-            questionButton.PreviewMouseLeftButtonUp += QuestionButton_PreviewMouseLeftButtonUp;
-            questionButton.MouseEnter += QuestionButton_MouseEnter;
-            questionButton.MouseLeave += QuestionButton_MouseLeave;
-            
-            minimizeButton.PreviewMouseLeftButtonDown += MinimizeButton_PreviewMouseLeftButtonDown;
-            minimizeButton.PreviewMouseLeftButtonUp += MinimizeButton_PreviewMouseLeftButtonUp;
-            minimizeButton.MouseEnter += MinimizeButton_MouseEnter;
-            minimizeButton.MouseLeave += MinimizeButton_MouseLeave;
-
-            closeButton.PreviewMouseLeftButtonDown += CloseButton_PreviewMouseLeftButtonDown;
-            closeButton.PreviewMouseLeftButtonUp += CloseButton_PreviewMouseLeftButtonUp;
-            closeButton.MouseEnter += CloseButton_MouseEnter;
-            closeButton.MouseLeave += CloseButton_MouseLeave;
 
             // Initialize InstallLogic
             _installLogic = new InstallLogic(this);
