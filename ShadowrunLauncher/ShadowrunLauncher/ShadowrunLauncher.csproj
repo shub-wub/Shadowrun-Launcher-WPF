@@ -10,7 +10,12 @@
 
   <ItemGroup>
 	<Resource Include="Images\*" />
+	<None Remove="Fonts\Shadowrun Regular.ttf" />
     <Folder Include="Images\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Fonts\Shadowrun Regular.ttf" />
   </ItemGroup>
 
 </Project>
