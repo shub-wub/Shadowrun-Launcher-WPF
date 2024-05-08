@@ -10,6 +10,7 @@ using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace ShadowrunLauncher.Logic
 {
@@ -17,6 +18,7 @@ namespace ShadowrunLauncher.Logic
     {
         ready, download, failed, downloadingGame, downloadingUpdate
     }
+
     internal class InstallLogic
     {
         internal string rootPath;
@@ -99,7 +101,10 @@ namespace ShadowrunLauncher.Logic
             if (File.Exists(localVersionFile))
             {
                 GameVersion localVersion = new GameVersion(File.ReadAllText(localVersionFile));
-                _mainWindow.VersionText.Content = localVersion.ToString();
+                _mainWindow.Dispatcher.Invoke(() =>
+                {
+                    _mainWindow.VersionText.Content = localVersion.ToString();
+                });
                 try
                 {
                     WebClient webClient = new WebClient();
@@ -260,7 +265,10 @@ namespace ShadowrunLauncher.Logic
 
                 File.WriteAllText(Path.Combine(releaseFilesPath, versionFileName), onlineVersion);
 
-                _mainWindow.VersionText.Content = onlineVersion;
+                _mainWindow.Dispatcher.Invoke(() =>
+                {
+                    _mainWindow.VersionText.Content = onlineVersion;
+                });
                 Status = LauncherStatus.ready;
             }
             catch (Exception ex)
@@ -302,26 +310,33 @@ namespace ShadowrunLauncher.Logic
             set
             {
                 _status = value;
+                string buttonText = "";
                 switch (_status)
                 {
                     case LauncherStatus.ready:
-                        _mainWindow.PlayButton.Content = "Play";
+                        buttonText = "Play";
                         break;
                     case LauncherStatus.download:
-                        _mainWindow.PlayButton.Content = "Download";
+                        buttonText = "Download";
                         break;
                     case LauncherStatus.failed:
-                        _mainWindow.PlayButton.Content = "Update Failed - Retry";
+                        buttonText = "Update Failed - Retry";
                         break;
                     case LauncherStatus.downloadingGame:
-                        _mainWindow.PlayButton.Content = "Downloading Game";
+                        buttonText = "Downloading Game";
                         break;
                     case LauncherStatus.downloadingUpdate:
-                        _mainWindow.PlayButton.Content = "Downloading Update";
+                        buttonText = "Downloading Update";
                         break;
                     default:
                         break;
                 }
+
+                // Update only the TextBlock text of the PlayButton
+                _mainWindow.PlayButton.Dispatcher.Invoke(() =>
+                {
+                    ((TextBlock)((Grid)_mainWindow.PlayButton.Content).Children[1]).Text = buttonText;
+                });
             }
         }
     }

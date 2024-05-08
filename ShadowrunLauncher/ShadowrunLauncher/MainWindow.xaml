@@ -46,7 +46,7 @@
                    local:ImageProperties.RotationDirection="Clockwise"
                    local:ImageProperties.RotationSpeed="2"
                    local:ImageProperties.IsRotating="True"/>
-            
+
             <Image Source="/Images/circle_04.png"
                    local:ImageProperties.RotationCenter="0.5,0.5"
                    local:ImageProperties.RotationDirection="CounterClockwise"
@@ -73,66 +73,57 @@
         </Grid>
 
         <!-- Question Button -->
-        <Button x:Name="questionButton" Width="25" Height="25" BorderThickness="0" Margin="550,-500,0,0" Background="Transparent" Padding="0">
+        <Button x:Name="questionButton" Tag="question" Width="25" Height="25" BorderThickness="0" Margin="550,-500,0,0" Background="Transparent" Padding="0">
+            <Grid x:Name="questionGrid" RenderTransformOrigin="0.5,0.5">
+                <Image x:Name="questionImage" Source="/Images/question_button.png" Width="25" Height="25"/>
+                <TextBlock Text="Test" Foreground="White" HorizontalAlignment="Center" TextAlignment="Center" FontSize="8" Width="25" VerticalAlignment="Bottom"/>
+            </Grid>
             <Button.Template>
                 <ControlTemplate TargetType="Button">
-                    <ContentPresenter Content="{TemplateBinding Content}" 
-                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
-                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                      Margin="0"/>
+                    <ContentPresenter />
                 </ControlTemplate>
             </Button.Template>
-            <Image x:Name="questionImage" Source="/Images/question_button.png" Stretch="Fill">
-                <Image.RenderTransform>
-                    <ScaleTransform ScaleX="1" ScaleY="1" />
-                </Image.RenderTransform>
-                <Image.RenderTransformOrigin>
-                    <Point X="0.5" Y="0.5"/>
-                </Image.RenderTransformOrigin>
-            </Image>
         </Button>
 
         <!-- Minimize Button -->
-        <Button x:Name="minimizeButton" Width="25" Height="25" BorderThickness="0" Margin="615,-500,0,0" Background="Transparent" Padding="0">
+        <Button x:Name="minimizeButton" Tag="minimize" Width="25" Height="25" BorderThickness="0" Margin="615,-500,0,0" Background="Transparent" Padding="0">
+            <Grid x:Name="minimizeGrid" RenderTransformOrigin="0.5,0.5">
+                <Image x:Name="minimizeImage" Source="/Images/minimize_button.png" Width="25" Height="25"/>
+                <TextBlock Text="Test" Foreground="White" HorizontalAlignment="Center" TextAlignment="Center" FontSize="8" Width="25" VerticalAlignment="Bottom"/>
+            </Grid>
             <Button.Template>
                 <ControlTemplate TargetType="Button">
-                    <ContentPresenter Content="{TemplateBinding Content}" 
-                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
-                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                              Margin="0"/>
+                    <ContentPresenter />
                 </ControlTemplate>
             </Button.Template>
-            <Image x:Name="minimizeImage" Source="/Images/minimize_button.png" Stretch="Fill">
-                <Image.RenderTransform>
-                    <ScaleTransform ScaleX="1" ScaleY="1" />
-                </Image.RenderTransform>
-                <Image.RenderTransformOrigin>
-                    <Point X="0.5" Y="0.5"/>
-                </Image.RenderTransformOrigin>
-            </Image>
         </Button>
 
         <!-- Close Button -->
-        <Button x:Name="closeButton" Width="25" Height="25" BorderThickness="0" Margin="680,-500,0,0" Background="Transparent" Padding="0">
+        <Button x:Name="closeButton" Tag="close" Width="25" Height="25" BorderThickness="0" Margin="680,-500,0,0" Background="Transparent" Padding="0">
+            <Grid x:Name="closeGrid" RenderTransformOrigin="0.5,0.5">
+                <Image x:Name="closeImage" Source="/Images/close_button.png" Width="25" Height="25"/>
+                <TextBlock Text="Test" Foreground="White" HorizontalAlignment="Center" TextAlignment="Center" FontSize="8" Width="25" VerticalAlignment="Bottom"/>
+            </Grid>
             <Button.Template>
                 <ControlTemplate TargetType="Button">
-                    <ContentPresenter Content="{TemplateBinding Content}" 
-                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
-                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                      Margin="0"/>
+                    <ContentPresenter />
                 </ControlTemplate>
             </Button.Template>
-            <Image x:Name="closeImage" Source="/Images/close_button.png" Stretch="Fill">
-                <Image.RenderTransform>
-                    <ScaleTransform ScaleX="1" ScaleY="1" />
-                </Image.RenderTransform>
-                <Image.RenderTransformOrigin>
-                    <Point X="0.5" Y="0.5"/>
-                </Image.RenderTransformOrigin>
-            </Image>
         </Button>
-        <Button Name="PlayButton" Content="test" HorizontalAlignment="Left" Margin="110,166,0,0" VerticalAlignment="Top" Click="PlayButtonClick">
+
+        <!-- Play Button -->
+        <Button x:Name="PlayButton" Tag="play" BorderThickness="0" Margin="68,168,500,350" Background="Transparent" Padding="0" Click="PlayButtonClick" Width="161" Height="32">
+            <Grid x:Name="playGrid" RenderTransformOrigin="0.5,0.5" >
+                <Image x:Name="playImage" Source="/Images/button_generic.png" Width="161" Height="32"/>
+                <TextBlock Text="Test" Foreground="White" HorizontalAlignment="Center" TextAlignment="Center" FontSize="9" Width="141" VerticalAlignment="Center"/>
+            </Grid>
+            <Button.Template>
+                <ControlTemplate TargetType="Button">
+                    <ContentPresenter />
+                </ControlTemplate>
+            </Button.Template>
         </Button>
+
         <Label Name="VersionText" Content="Version" HorizontalAlignment="Left" Margin="37,499,0,0" VerticalAlignment="Top" Foreground="White"/>
 
     </Grid>
