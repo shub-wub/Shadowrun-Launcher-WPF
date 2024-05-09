@@ -92,6 +92,8 @@ namespace ShadowrunLauncher
             }
         }
 
+        // Remove This Text
+
         private void PlayButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             // Change the image source to the clicked version
