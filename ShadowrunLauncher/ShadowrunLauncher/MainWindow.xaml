@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         ContentRendered="Window_ContentRendered"
-        Title="ShadowrunLauncher" Height="550" Width="730" WindowStyle="None" ResizeMode="NoResize">
+        Title="ShadowrunLauncher" Height="550" Width="730" WindowStyle="None" ResizeMode="NoResize" Cursor="/Cursors/cursor.cur">
     <Grid Width="730" Height="550">
         <!-- Background image -->
         <Image HorizontalAlignment="Center" Height="550" VerticalAlignment="Center" Width="730" Source="\Images\BG.png"/>
