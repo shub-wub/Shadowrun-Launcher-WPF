@@ -51,6 +51,11 @@ namespace ShadowrunLauncher
             websiteButton.MouseEnter += WebsiteButton_MouseEnter;
             websiteButton.MouseLeave += WebsiteButton_MouseLeave;
 
+            generateKeyButton.PreviewMouseLeftButtonDown += GenerateKeyButton_PreviewMouseLeftButtonDown;
+            generateKeyButton.PreviewMouseLeftButtonUp += GenerateKeyButton_PreviewMouseLeftButtonUp;
+            generateKeyButton.MouseEnter += GenerateKeyButton_MouseEnter;
+            generateKeyButton.MouseLeave += GenerateKeyButton_MouseLeave;
+
             questionButton.PreviewMouseLeftButtonDown += QuestionButton_PreviewMouseLeftButtonDown;
             questionButton.PreviewMouseLeftButtonUp += QuestionButton_PreviewMouseLeftButtonUp;
             questionButton.MouseEnter += QuestionButton_MouseEnter;
@@ -238,6 +243,67 @@ namespace ShadowrunLauncher
             Uri uri = new Uri("pack://application:,,,/Images/button_generic.png");
             BitmapImage bitmap = new BitmapImage(uri);
             playImage.Source = bitmap;
+        }
+
+        private void GenerateKeyButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            // Play Sound On Click
+            PlaySound("Audio/buttonClick.wav", "buttonClick", buttonClickVolume);
+
+            // Change the image source to the clicked version
+            Uri uri = new Uri("pack://application:,,,/Images/button_generic_clicked.png");
+            BitmapImage bitmap = new BitmapImage(uri);
+            generateKeyImage.Source = bitmap;
+
+            // Reduce scale of the grid containing both the image and text from the center
+            ScaleTransform scaleTransform = new ScaleTransform(0.95, 0.95); // Scale factor (0.95) can be adjusted
+            generateKeyGrid.RenderTransform = scaleTransform;
+
+            // Optionally, you can add an animation for a smooth effect
+            DoubleAnimation animation = new DoubleAnimation(1.0, 0.95, TimeSpan.FromSeconds(0.1)); // Duration (0.2 seconds) can be adjusted
+            scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, animation);
+            scaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, animation);
+        }
+
+        private void GenerateKeyButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            // Reset the image source and scale of the play button
+            Uri uri = new Uri("pack://application:,,,/Images/button_generic.png");
+            BitmapImage bitmap = new BitmapImage(uri);
+            generateKeyImage.Source = bitmap;
+            ScaleTransform scaleTransform = new ScaleTransform(1, 1);
+            generateKeyGrid.RenderTransform = scaleTransform;
+
+            DoubleAnimation animation = new DoubleAnimation(0.95, 1, TimeSpan.FromSeconds(0.1)); // Duration (0.2 seconds) can be adjusted
+            scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, animation);
+            scaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, animation);
+
+            // Check if the mouse was released within the bounds of the play button
+            Point position = e.GetPosition(generateKeyButton);
+            if (position.X >= 0 && position.Y >= 0 && position.X < generateKeyButton.ActualWidth && position.Y < generateKeyButton.ActualHeight)
+            {
+                KeyDisplay display = new KeyDisplay("CMCY6-TPV4Y-4HYWP-Q2TFJ-R8BW3", true);
+                display.Show();
+            }
+        }
+
+        private void GenerateKeyButton_MouseEnter(object sender, MouseEventArgs e)
+        {
+            // Play Sound On Mouseover
+            PlaySound("Audio/buttonHover.wav", "buttonHover", buttonClickVolume);
+
+            // Change the image source to the highlighted version
+            Uri uri = new Uri("pack://application:,,,/Images/button_generic_highlight.png");
+            BitmapImage bitmap = new BitmapImage(uri);
+            generateKeyImage.Source = bitmap;
+        }
+
+        private void GenerateKeyButton_MouseLeave(object sender, MouseEventArgs e)
+        {
+            // Reset the image source to the default version
+            Uri uri = new Uri("pack://application:,,,/Images/button_generic.png");
+            BitmapImage bitmap = new BitmapImage(uri);
+            generateKeyImage.Source = bitmap;
         }
 
         private void DiscordButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
