@@ -1,0 +1,27 @@
+﻿<Window x:Class="ShadowrunLauncher.KeyDisplay"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ShadowrunLauncher"
+        mc:Ignorable="d"
+        Title="DisplayKeyForm" Height="135" Width="355" Background="#404040" ResizeMode="NoResize" WindowStyle="None" ShowInTaskbar="False" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <GroupBox Header="Windows Live License Key" Margin="14,24,14,0" VerticalAlignment="Top" Foreground="White">
+            <StackPanel Orientation="Horizontal">
+                <TextBox Width="50" MaxLength="5" TextAlignment="Center" Margin="5" x:Name="r1"/>
+                <TextBlock Text="-" VerticalAlignment="Center"/>
+                <TextBox Width="50" MaxLength="5" TextAlignment="Center" Margin="5" x:Name="r2"/>
+                <TextBlock Text="-" VerticalAlignment="Center"/>
+                <TextBox Width="50" MaxLength="5" TextAlignment="Center" Margin="5" x:Name="r3"/>
+                <TextBlock Text="-" VerticalAlignment="Center"/>
+                <TextBox Width="50" MaxLength="5" TextAlignment="Center" Margin="5" x:Name="r4"/>
+                <TextBlock Text="-" VerticalAlignment="Center"/>
+                <TextBox Width="50" MaxLength="5" TextAlignment="Center" Margin="5" x:Name="r5"/>
+            </StackPanel>
+        </GroupBox>
+        <Grid VerticalAlignment="Bottom">
+            <Button x:Name="copyToClipboardButton" Content="Copy to Clipboard" HorizontalAlignment="Right" Margin="0,0,125,20" Padding="5" Click="CopyToClipboard_Click"/>
+        </Grid>
+    </Grid>
+</Window>

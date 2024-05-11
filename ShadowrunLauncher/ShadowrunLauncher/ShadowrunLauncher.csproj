@@ -10,11 +10,24 @@
 
   <ItemGroup>
 	<Resource Include="Images\*" />
+	<None Remove="Audio\backgroundAmbience.wav" />
+	<None Remove="Audio\buttonClick.wav" />
+	<None Remove="Audio\buttonHover.wav" />
 	<None Remove="Fonts\Shadowrun Regular.ttf" />
+	<Content Include="Audio\backgroundAmbience.wav">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</Content>
+	<Content Include="Audio\buttonClick.wav">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</Content>
+	<Content Include="Audio\buttonHover.wav">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</Content>
     <Folder Include="Images\" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Cursors\cursor.cur" />
     <Resource Include="Fonts\Shadowrun Regular.ttf" />
   </ItemGroup>
 
