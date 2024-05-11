@@ -24,7 +24,7 @@ namespace ShadowrunLauncher.Logic
                 MessageBox.Show("Failed to copy to clipboard.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-        public static string DecimalToHexFormat(int decimalValue)
+        public static string DecimalToHexFormat(long decimalValue)
         {
             string hexValue = decimalValue.ToString("X"); // Convert to hex
             char[] hexChars = hexValue.ToCharArray(); // Convert to char array

@@ -11,22 +11,20 @@ namespace ShadowrunLauncher.Logic
 {
     internal class GenerateKeyLogic
     {
-        private MainWindow _mainWindow;
-        private KeyDisplay _keyDisplay;
+        private InstallLogic _installLogic;
 
-        public GenerateKeyLogic(MainWindow mainWindow)
+        public GenerateKeyLogic(InstallLogic installLogic)
         {
-            _mainWindow = mainWindow;
-            _keyDisplay = new KeyDisplay();
+            _installLogic = installLogic;
         }
 
-        internal void GenerateKeyButtonClickLogic(object sender, RoutedEventArgs e)
+        internal void GenerateKeyButtonClickLogic()
         {
             // Fetch and print PCID from the registry at the beginning of the GenerateKey method
             string pcidDecimal = RegistryLogic.GetPcidFromRegistry();
             if (!string.IsNullOrEmpty(pcidDecimal))
             {
-                string pcid2 = HelperMethods.DecimalToHexFormat(int.Parse(pcidDecimal));
+                string pcid2 = HelperMethods.DecimalToHexFormat(long.Parse(pcidDecimal));
                 Console.WriteLine($"PCID from registry (decimal): {pcidDecimal}");
                 Console.WriteLine($"PCID from registry (hex format): {pcid2}");
             }
@@ -42,24 +40,21 @@ namespace ShadowrunLauncher.Logic
 
                 if (response == MessageBoxResult.Yes) // If the user clicked "Yes"
                 {
-                    //MainForm.PlayButton_Click()
+                    _installLogic.PlayButtonClickLogic();
                 }
                 else
                 {
                     // TODO
                 }
+                return;
             }
 
-            // Replace the following lines with your actual key generation logic
             KeyData keyData = GetRandomKeyData();
-            string pcid = keyData.Pcid; // Replace this with your actual PCID generation logic
-            string key = keyData.Key; // Replace this with your actual key generation logic
+            string pcid = keyData.Pcid;
+            string key = keyData.Key;
             Console.WriteLine($"PCID: {pcid}");
 
-            // Update the content of the Entry widget (Assuming equivalent UI elements)
-            // Replace the following lines with your actual UI update logic
             Console.WriteLine("Updating UI with generated key...");
-            // Move the widgets to the desired location (Assuming equivalent UI elements)
             DisplayKey(key);
             // Copy the key to the clipboard
             HelperMethods.CopyToClipboard(key);
@@ -111,8 +106,8 @@ namespace ShadowrunLauncher.Logic
         }
         public void DisplayKey(string key = "GWQJH-FF3YX-D2FBT-9TQF4-BPK97")
         {
-            KeyDisplay display = new KeyDisplay(key);
-            display.ShowDialog();
+            KeyDisplay display = new KeyDisplay(_installLogic, key);
+            display.Show();
         }
 
         private List<KeyData> data = new List<KeyData>

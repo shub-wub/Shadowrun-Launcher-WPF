@@ -57,7 +57,7 @@ namespace ShadowrunLauncher.Logic
             _mainWindow = mainWindow;
         }
 
-        internal void PlayButtonClickLogic(object sender, RoutedEventArgs e)
+        internal void PlayButtonClickLogic()
         {
             if (File.Exists(gameExe) && Status == LauncherStatus.ready)
             {
@@ -67,9 +67,9 @@ namespace ShadowrunLauncher.Logic
                     string srPcidBackupValue = RegistryLogic.GetSrPcidBackupFromRegistry();
                     if (!string.IsNullOrEmpty(srPcidBackupValue))
                     {
-                        string uawPcidHex = HelperMethods.DecimalToHexFormat(int.Parse(srPcidBackupValue));
-                        Console.WriteLine($"UAWPCIDBACKUP from registry (decimal): {srPcidBackupValue}");
-                        Console.WriteLine($"UAWPCIDBACKUP from registry (hex format): {uawPcidHex}");
+                        string srPcidHex = HelperMethods.DecimalToHexFormat(int.Parse(srPcidBackupValue));
+                        Console.WriteLine($"SRPCIDBACKUP from registry (decimal): {srPcidBackupValue}");
+                        Console.WriteLine($"SRPCIDBACKUP from registry (hex format): {srPcidHex}");
                         RegistryLogic.SetPcidInRegistry(srPcidBackupValue);
                         RegistryLogic.DeleteSrPcidBackupFromRegistry();
                     }

@@ -76,7 +76,7 @@ namespace ShadowrunLauncher
             if (position.X >= 0 && position.Y >= 0 && position.X < button.ActualWidth && position.Y < button.ActualHeight)
             {
                 // Play the application
-                installLogic.PlayButtonClickLogic(sender, e);
+                installLogic.PlayButtonClickLogic();
             }
         }
 

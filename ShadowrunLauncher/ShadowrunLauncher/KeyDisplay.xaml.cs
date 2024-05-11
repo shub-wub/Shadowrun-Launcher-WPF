@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ShadowrunLauncher.Logic;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,26 +20,16 @@ namespace ShadowrunLauncher
     /// </summary>
     public partial class KeyDisplay : Window
     {
+        private GenerateKeyLogic _generateKeyLogic;
+        private InstallLogic _installLogic;
         private static string currentkey = " ";
-        bool isgen;
         static Random random = new Random();
-        public KeyDisplay(string key = "CMCY6-TPV4Y-4HYWP-Q2TFJ-R8BW3", bool IsGen = false)
+        internal KeyDisplay(InstallLogic installLogic, string key = "CMCY6-TPV4Y-4HYWP-Q2TFJ-R8BW3", bool IsGen = false)
         {
             InitializeComponent();
-            if (IsGen)
-            {
-                isgen = IsGen;
-                copyToClipboardButton.Content = "Generate Key";
-                SetKey(GenerateKey());
-            }
-            else
-            {
-                if (key.Length > 0)
-                {
-                    SetKey(key);
-                }
-
-            }
+            _installLogic = installLogic;
+            _generateKeyLogic = new GenerateKeyLogic(installLogic);
+            SetKey(key);
         }
         private void SetKey(string key)
         {
@@ -50,37 +41,9 @@ namespace ShadowrunLauncher
             r4.Text = Keysector[3];
             r5.Text = Keysector[4];
         }
-        public static string GenerateKey()
-        {
-            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            char[] key = new char[29];
-
-            for (int i = 0; i < key.Length; i++)
-            {
-                if ((i + 1) % 6 == 0)
-                    key[i] = '-';
-                else
-                    key[i] = chars[random.Next(chars.Length)];
-            }
-            currentkey = new string(key);
-            return new string(key);
-        }
         private void exit_Click(object sender, EventArgs e)
         {
             Close();
-        }
-
-        private void CopyToClipboard_Click(object sender, RoutedEventArgs e)
-        {
-            if (isgen)
-            {
-                SetKey(GenerateKey());
-                Clipboard.SetText(currentkey);
-            }
-            else
-            {
-                Clipboard.SetText(currentkey);
-            }
         }
     }
 }

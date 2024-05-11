@@ -16,6 +16,7 @@ namespace ShadowrunLauncher
         private bool isDragging = false;
         private Point startPoint;
         private InstallLogic _installLogic;
+        private GenerateKeyLogic _generateKeyLogic;
 
         // Dictionary to hold MediaPlayer instances for different sound channels
         private Dictionary<string, MediaPlayer> soundChannels = new Dictionary<string, MediaPlayer>();
@@ -73,6 +74,7 @@ namespace ShadowrunLauncher
 
             // Initialize InstallLogic
             _installLogic = new InstallLogic(this);
+            _generateKeyLogic = new GenerateKeyLogic(_installLogic);
         }
 
         private void Window_ContentRendered(object sender, EventArgs e)
@@ -222,7 +224,7 @@ namespace ShadowrunLauncher
             if (position.X >= 0 && position.Y >= 0 && position.X < playButton.ActualWidth && position.Y < playButton.ActualHeight)
             {
                 // Play the application
-                _installLogic.PlayButtonClickLogic(sender, e);
+                _installLogic.PlayButtonClickLogic();
             }
         }
 
@@ -282,8 +284,9 @@ namespace ShadowrunLauncher
             Point position = e.GetPosition(generateKeyButton);
             if (position.X >= 0 && position.Y >= 0 && position.X < generateKeyButton.ActualWidth && position.Y < generateKeyButton.ActualHeight)
             {
-                KeyDisplay display = new KeyDisplay("CMCY6-TPV4Y-4HYWP-Q2TFJ-R8BW3", true);
-                display.Show();
+                _generateKeyLogic.GenerateKeyButtonClickLogic();
+                //KeyDisplay display = new KeyDisplay(_installLogic, "CMCY6-TPV4Y-4HYWP-Q2TFJ-R8BW3", true);
+                //display.Show();
             }
         }
 
