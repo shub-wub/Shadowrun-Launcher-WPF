@@ -45,5 +45,10 @@ namespace ShadowrunLauncher
         {
             Close();
         }
+
+        private void copyToClipboardButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

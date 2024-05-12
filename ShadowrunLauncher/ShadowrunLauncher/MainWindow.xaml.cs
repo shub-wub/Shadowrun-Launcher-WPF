@@ -8,6 +8,7 @@ using System.Windows.Media.Imaging;
 using ShadowrunLauncher.Logic;
 using System.Diagnostics;
 using System.IO;
+using System.Windows.Automation;
 
 namespace ShadowrunLauncher
 {
@@ -17,6 +18,9 @@ namespace ShadowrunLauncher
         private Point startPoint;
         private InstallLogic _installLogic;
         private GenerateKeyLogic _generateKeyLogic;
+        private bool isDirectXInstalled;
+        private bool isGameInstalled;
+        private bool isGfwlInstalled;
 
         // Dictionary to hold MediaPlayer instances for different sound channels
         private Dictionary<string, MediaPlayer> soundChannels = new Dictionary<string, MediaPlayer>();
@@ -30,6 +34,7 @@ namespace ShadowrunLauncher
             InitializeComponent();
             InitializeSoundChannels();
             StartGlowAnimation();
+
             MouseLeftButtonDown += MainWindow_MouseLeftButtonDown;
             MouseMove += MainWindow_MouseMove;
             MouseLeftButtonUp += MainWindow_MouseLeftButtonUp;
@@ -75,6 +80,19 @@ namespace ShadowrunLauncher
             // Initialize InstallLogic
             _installLogic = new InstallLogic(this);
             _generateKeyLogic = new GenerateKeyLogic(_installLogic);
+
+            isDirectXInstalled = _installLogic.IsDirectX9Installed();
+            isGameInstalled = _installLogic.IsGameInstalled();
+            isGfwlInstalled = _installLogic.IsGfwlInstalled();
+
+            if (isDirectXInstalled && isGameInstalled && isGfwlInstalled)
+            {
+                generateKeyButton.IsEnabled = true;
+            } 
+            else
+            {
+                generateKeyButton.IsEnabled = false;
+            }
         }
 
         private void Window_ContentRendered(object sender, EventArgs e)

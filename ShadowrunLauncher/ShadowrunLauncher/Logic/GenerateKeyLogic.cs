@@ -22,9 +22,10 @@ namespace ShadowrunLauncher.Logic
         {
             // Fetch and print PCID from the registry at the beginning of the GenerateKey method
             string pcidDecimal = RegistryLogic.GetPcidFromRegistry();
+            string pcid2 = "";
             if (!string.IsNullOrEmpty(pcidDecimal))
             {
-                string pcid2 = HelperMethods.DecimalToHexFormat(long.Parse(pcidDecimal));
+                pcid2 = HelperMethods.DecimalToHexFormat(long.Parse(pcidDecimal));
                 Console.WriteLine($"PCID from registry (decimal): {pcidDecimal}");
                 Console.WriteLine($"PCID from registry (hex format): {pcid2}");
             }
@@ -69,7 +70,6 @@ namespace ShadowrunLauncher.Logic
             else
             {
                 Console.WriteLine("IT IS NOT HERE");
-                string pcid2 = ""; // Replace this with your actual PCID2 generation logic
                 registryModificationContent = $"Windows Registry Editor Version 5.00\n\n[HKEY_CURRENT_USER\\Software\\Classes\\SOFTWARE\\Microsoft\\XLive]\n\"PCID\"=hex(b):{pcid}\n\"SRPCIDBACKUP\"=hex(b):{pcid2}";
             }
 
@@ -81,8 +81,8 @@ namespace ShadowrunLauncher.Logic
 
             // Delete Token.bin files
             string[] pathsToCheck = {
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Microsoft", "XLive", "Titles", "534507f0", "Token.bin"),
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Microsoft", "XLive", "Titles", "534507F0", "Token.bin")
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Microsoft", "XLive", "Titles", "4d5307d6", "Token.bin"),
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Microsoft", "XLive", "Titles", "4d5307d6", "Token.bin")
             };
 
             // Loop through the paths and delete the file if it exists
@@ -107,6 +107,7 @@ namespace ShadowrunLauncher.Logic
         public void DisplayKey(string key = "GWQJH-FF3YX-D2FBT-9TQF4-BPK97")
         {
             KeyDisplay display = new KeyDisplay(_installLogic, key);
+            display.Topmost = true;
             display.Show();
         }
 

@@ -21,7 +21,7 @@
             </StackPanel>
         </GroupBox>
         <Grid VerticalAlignment="Bottom">
-            <Button x:Name="copyToClipboardButton" Content="Copy to Clipboard" HorizontalAlignment="Right" Margin="0,0,125,20" Padding="5" Click="CopyToClipboard_Click"/>
+            <Button x:Name="copyToClipboardButton" Content="Copy Key and Launch Shadowrun" HorizontalAlignment="Right" Margin="0,0,80,20" Padding="5" Click="copyToClipboardButton_Click" />
         </Grid>
     </Grid>
 </Window>

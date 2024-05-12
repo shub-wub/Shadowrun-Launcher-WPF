@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -278,7 +279,39 @@ namespace ShadowrunLauncher.Logic
             }
         }
 
-        public static bool IsDirectX9Installed()
+        public bool IsGfwlInstalled()
+        {
+            return File.Exists(gfwlProgramFileExe);
+        }
+
+        public bool IsGameInstalled()
+        {
+            if (File.Exists(localVersionFile))
+            {
+                GameVersion localVersion = new GameVersion(File.ReadAllText(localVersionFile));
+                _mainWindow.Dispatcher.Invoke(() =>
+                {
+                    _mainWindow.VersionText.Content = localVersion.ToString();
+                });
+                WebClient webClient = new WebClient();
+                GameVersion onlineVersion = new GameVersion(webClient.DownloadString(onlineVersionFile));
+
+                if (onlineVersion.IsDifferentThan(localVersion))
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public bool IsDirectX9Installed()
         {
             string system32Directory = Path.Combine(Environment.GetEnvironmentVariable("WINDIR"), "System32");
             bool foundD3dx9 = false;
