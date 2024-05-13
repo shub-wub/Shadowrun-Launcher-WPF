@@ -97,7 +97,7 @@ namespace ShadowrunLauncher
 
         private void Window_ContentRendered(object sender, EventArgs e)
         {
-            _installLogic.CheckForUpdates();
+            _installLogic.CheckForUpdates(true);
         }
 
         private void InitializeSoundChannels()

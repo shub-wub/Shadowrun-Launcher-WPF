@@ -55,6 +55,7 @@ namespace ShadowrunLauncher.Logic
             gfwlExe = Path.Combine(releaseFilesPath, gfwlExeFileName);
             directXExe = Path.Combine(releaseFilesPath, directXInstallFileName);
             localVersionFile = Path.Combine(releaseFilesPath, versionFileName);
+            _status = LauncherStatus.download;
             _mainWindow = mainWindow;
         }
 
@@ -89,17 +90,17 @@ namespace ShadowrunLauncher.Logic
             }
             else if (Status == LauncherStatus.download)
             {
-                CheckForUpdates();
+                CheckForUpdates(false);
             }
             /*else
             {
-                CheckForUpdates();
+                CheckForUpdates(false);
             }*/
         }
 
-        internal void CheckForUpdates()
+        internal void CheckForUpdates(bool updateCheck)
         {
-            if (File.Exists(localVersionFile))
+            if (File.Exists(localVersionFile) && updateCheck)
             {
                 GameVersion localVersion = new GameVersion(File.ReadAllText(localVersionFile));
                 _mainWindow.Dispatcher.Invoke(() =>
@@ -126,7 +127,7 @@ namespace ShadowrunLauncher.Logic
                     MessageBox.Show($"Error checking for game updates: {ex}");
                 }
             }
-            else if (Status == LauncherStatus.download)
+            else if (Status == LauncherStatus.download && !updateCheck)
             {
                 Status = LauncherStatus.download;
                 InstallGameFiles(false, GameVersion.zero);
