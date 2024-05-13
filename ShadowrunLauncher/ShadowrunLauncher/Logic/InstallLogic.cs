@@ -23,9 +23,9 @@ namespace ShadowrunLauncher.Logic
     internal class InstallLogic
     {
         internal string rootPath;
-        internal string onlineBuildZip = @"C:\Users\sfish\OneDrive\Desktop\build\build.zip";
-        internal string onlineGfwlZip = @"C:\Users\sfish\OneDrive\Desktop\build\gfwlivesetup.zip";
-        internal string onlineVersionFile = @"C:\Users\sfish\OneDrive\Desktop\build\version.txt";
+        internal string onlineBuildZip = @"http://157.245.214.234/releases/build.zip";
+        internal string onlineGfwlZip = @"http://157.245.214.234/releases/gfwlsetup.zip";
+        internal string onlineVersionFile = @"http://157.245.214.234/releases/version.txt";
         internal string directXInstall = @"https://download.microsoft.com/download/1/7/1/1718CCC4-6315-4D8E-9543-8E28A4E18C4C/dxwebsetup.exe";
         internal string gfwlProgramFileExe = @"C:\Program Files (x86)\Microsoft Games for Windows - LIVE\Client\GFWLive.exe";
         internal string releasefolderName = "shadowrun";
@@ -68,7 +68,7 @@ namespace ShadowrunLauncher.Logic
                     string srPcidBackupValue = RegistryLogic.GetSrPcidBackupFromRegistry();
                     if (!string.IsNullOrEmpty(srPcidBackupValue))
                     {
-                        string srPcidHex = HelperMethods.DecimalToHexFormat(int.Parse(srPcidBackupValue));
+                        string srPcidHex = HelperMethods.DecimalToHexFormat(long.Parse(srPcidBackupValue));
                         Console.WriteLine($"SRPCIDBACKUP from registry (decimal): {srPcidBackupValue}");
                         Console.WriteLine($"SRPCIDBACKUP from registry (hex format): {srPcidHex}");
                         RegistryLogic.SetPcidInRegistry(srPcidBackupValue);
@@ -131,21 +131,23 @@ namespace ShadowrunLauncher.Logic
                 Status = LauncherStatus.download;
                 InstallGameFiles(false, GameVersion.zero);
             }
-            else
+            /*else
             {
                 Status = LauncherStatus.download;
+                _mainWindow.playButton.IsEnabled = false;
                 //InstallGameFiles(false, Version.zero);
-            }
+            }*/
         }
 
         private void InstallGameFiles(bool _isUpdate, GameVersion _onlineVersion)
         {
             try
             {
+                _mainWindow.playButton.IsEnabled = false;
                 WebClient webClientGame = new WebClient();
                 WebClient webClientGfwl = new WebClient();
                 WebClient webClientDirectX = new WebClient();
-                if (!_isUpdate)
+                if (_isUpdate)
                 {
                     Status = LauncherStatus.downloadingUpdate;
                 }
@@ -257,7 +259,6 @@ namespace ShadowrunLauncher.Logic
         }
         private void DownloadGameCompletedCallback(object sender, AsyncCompletedEventArgs e)
         {
-
             try
             {
                 string onlineVersion = ((GameVersion)e.UserState).ToString();
@@ -271,6 +272,7 @@ namespace ShadowrunLauncher.Logic
                     _mainWindow.VersionText.Content = onlineVersion;
                 });
                 Status = LauncherStatus.ready;
+                _mainWindow.playButton.IsEnabled = true;
             }
             catch (Exception ex)
             {

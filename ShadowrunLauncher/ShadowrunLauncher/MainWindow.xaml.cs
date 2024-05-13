@@ -88,7 +88,7 @@ namespace ShadowrunLauncher
             if (isDirectXInstalled && isGameInstalled && isGfwlInstalled)
             {
                 generateKeyButton.IsEnabled = true;
-            } 
+            }
             else
             {
                 generateKeyButton.IsEnabled = false;
