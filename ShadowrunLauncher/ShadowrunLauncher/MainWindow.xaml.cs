@@ -91,7 +91,7 @@ namespace ShadowrunLauncher
             }
             else
             {
-                generateKeyButton.IsEnabled = false;
+                //generateKeyButton.IsEnabled = false;
             }
         }
 
@@ -302,9 +302,9 @@ namespace ShadowrunLauncher
             Point position = e.GetPosition(generateKeyButton);
             if (position.X >= 0 && position.Y >= 0 && position.X < generateKeyButton.ActualWidth && position.Y < generateKeyButton.ActualHeight)
             {
-                _generateKeyLogic.GenerateKeyButtonClickLogic();
-                //KeyDisplay display = new KeyDisplay(_installLogic, "CMCY6-TPV4Y-4HYWP-Q2TFJ-R8BW3", true);
-                //display.Show();
+                //_generateKeyLogic.GenerateKeyButtonClickLogic();
+                KeyDisplay display = new KeyDisplay(_installLogic, "CMCY6-TPV4Y-4HYWP-Q2TFJ-R8BW3", true);
+                display.Show();
             }
         }
 
