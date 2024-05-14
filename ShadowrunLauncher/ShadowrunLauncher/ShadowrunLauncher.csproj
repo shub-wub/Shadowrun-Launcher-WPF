@@ -27,6 +27,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="DiscordRichPresence" Version="1.2.1.24" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="Cursors\cursor.cur" />
     <Resource Include="Fonts\Shadowrun Regular.ttf" />
   </ItemGroup>

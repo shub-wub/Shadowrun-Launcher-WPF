@@ -9,6 +9,8 @@ using ShadowrunLauncher.Logic;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Automation;
+using DiscordRPC;
+using DiscordRPC.Message;
 
 namespace ShadowrunLauncher
 {
@@ -21,6 +23,7 @@ namespace ShadowrunLauncher
         private bool isDirectXInstalled;
         private bool isGameInstalled;
         private bool isGfwlInstalled;
+        private DiscordRpcClient client;
 
         // Dictionary to hold MediaPlayer instances for different sound channels
         private Dictionary<string, MediaPlayer> soundChannels = new Dictionary<string, MediaPlayer>();
@@ -92,6 +95,77 @@ namespace ShadowrunLauncher
             else
             {
                 //generateKeyButton.IsEnabled = false;
+            }
+
+            // Initialize the DiscordRPC client with your application's Client ID
+            client = new DiscordRpcClient("1239771624941686786");
+
+            // Subscribe to events
+            client.OnConnectionFailed += Client_OnConnectionFailed;
+            client.OnError += Client_OnError;
+
+            client.Initialize();
+
+            // Update presence when the window is loaded
+            Loaded += MainWindow_Loaded;
+        }
+
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            // Set the presence details when the window is loaded
+            var presence = new RichPresence()
+            {
+                Details = "Ranked",
+                State = "4v4",
+                Assets = new Assets()
+                {
+                    LargeImageKey = "discordappicon",
+                    LargeImageText = "Shadowrun 2007"
+                },
+                Party = new Party()
+                {
+                    Size = 1,   // Number of people currently in the party (e.g., the player)
+                    Max = 8     // Maximum number of people allowed in the party
+                }
+            };
+
+            UpdatePresence(presence);
+        }
+
+        private void UpdatePresence(RichPresence presence)
+        {
+            try
+            {
+                client.SetPresence(presence);
+            }
+            catch (Exception ex)
+            {
+                // Handle any exceptions that occur during presence update
+                Console.WriteLine("Error updating presence: " + ex.Message);
+            }
+        }
+
+        private void Client_OnConnectionFailed(object sender, ConnectionFailedMessage args)
+        {
+        
+            // Handle connection failure
+            Console.WriteLine("Connection to Discord failed: " + args);
+        }
+
+        private void Client_OnError(object sender, ErrorMessage args)
+        {
+            // Handle other errors
+            Console.WriteLine("Discord RPC error: " + args.Message);
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+
+            // Make sure to dispose the DiscordRPC client when the application is closed
+            if (client != null)
+            {
+                client.Dispose();
             }
         }
 
