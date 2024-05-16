@@ -24,6 +24,7 @@ namespace ShadowrunLauncher
         private bool isGameInstalled;
         private bool isGfwlInstalled;
         private DiscordRpcClient client;
+        private bool isSecondaryWindowOpen = false;
 
         // Dictionary to hold MediaPlayer instances for different sound channels
         private Dictionary<string, MediaPlayer> soundChannels = new Dictionary<string, MediaPlayer>();
@@ -69,7 +70,7 @@ namespace ShadowrunLauncher
             questionButton.PreviewMouseLeftButtonUp += QuestionButton_PreviewMouseLeftButtonUp;
             questionButton.MouseEnter += QuestionButton_MouseEnter;
             questionButton.MouseLeave += QuestionButton_MouseLeave;
-            
+
             minimizeButton.PreviewMouseLeftButtonDown += MinimizeButton_PreviewMouseLeftButtonDown;
             minimizeButton.PreviewMouseLeftButtonUp += MinimizeButton_PreviewMouseLeftButtonUp;
             minimizeButton.MouseEnter += MinimizeButton_MouseEnter;
@@ -147,7 +148,7 @@ namespace ShadowrunLauncher
 
         private void Client_OnConnectionFailed(object sender, ConnectionFailedMessage args)
         {
-        
+
             // Handle connection failure
             Console.WriteLine("Connection to Discord failed: " + args);
         }
@@ -278,6 +279,52 @@ namespace ShadowrunLauncher
             }
         }
 
+        private void OpenSecondaryWindow()
+        {
+            // Set the flag to indicate that the secondary window is open
+            isSecondaryWindowOpen = true;
+
+            // Create an instance of the KeyDisplay window
+            KeyDisplay display = new KeyDisplay(_installLogic, "CMCY6-TPV4Y-4HYWP-Q2TFJ-R8BW3", true);
+
+            // Set the owner of the KeyDisplay window to the main window
+            display.Owner = Application.Current.MainWindow;
+
+            // Calculate the desired position within the main window
+            double desiredLeft = Application.Current.MainWindow.Left + 330; // Adjust the offset as needed
+            double desiredTop = Application.Current.MainWindow.Top + 190; // Adjust the offset as needed
+
+            // Set the position of the secondary window
+            display.Left = desiredLeft;
+            display.Top = desiredTop;
+
+            // Subscribe to the LocationChanged event of the main window
+            EventHandler mainLocationChangedHandler = null;
+            mainLocationChangedHandler = (s, args) =>
+            {
+                // Update the position of the secondary window when the main window is moved
+                if (display.Owner != null)
+                {
+                    Point mainWindowLocation = display.Owner.PointToScreen(new Point(0, 0));
+                    display.Left = mainWindowLocation.X + 330; // Adjust the offset as needed
+                    display.Top = mainWindowLocation.Y + 190; // Adjust the offset as needed
+                }
+            };
+            Application.Current.MainWindow.LocationChanged += mainLocationChangedHandler;
+
+            // Unsubscribe from the LocationChanged event when the secondary window is closed
+            display.Closed += (s, args) =>
+            {
+                // Set the flag to indicate that the secondary window is closed
+                isSecondaryWindowOpen = false;
+
+                Application.Current.MainWindow.LocationChanged -= mainLocationChangedHandler;
+            };
+
+            // Show the KeyDisplay window
+            display.Show();
+        }
+
         private void PlayButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             // Play Sound On Click
@@ -341,64 +388,77 @@ namespace ShadowrunLauncher
 
         private void GenerateKeyButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            // Play Sound On Click
-            PlaySound("Audio/buttonClick.wav", "buttonClick", buttonClickVolume);
+            if (!isSecondaryWindowOpen)
+            {
+                // Play Sound On Click
+                PlaySound("Audio/buttonClick.wav", "buttonClick", buttonClickVolume);
 
-            // Change the image source to the clicked version
-            Uri uri = new Uri("pack://application:,,,/Images/button_generic_clicked.png");
-            BitmapImage bitmap = new BitmapImage(uri);
-            generateKeyImage.Source = bitmap;
+                // Change the image source to the clicked version
+                Uri uri = new Uri("pack://application:,,,/Images/button_generic_clicked.png");
+                BitmapImage bitmap = new BitmapImage(uri);
+                generateKeyImage.Source = bitmap;
 
-            // Reduce scale of the grid containing both the image and text from the center
-            ScaleTransform scaleTransform = new ScaleTransform(0.95, 0.95); // Scale factor (0.95) can be adjusted
-            generateKeyGrid.RenderTransform = scaleTransform;
+                // Reduce scale of the grid containing both the image and text from the center
+                ScaleTransform scaleTransform = new ScaleTransform(0.95, 0.95); // Scale factor (0.95) can be adjusted
+                generateKeyGrid.RenderTransform = scaleTransform;
 
-            // Optionally, you can add an animation for a smooth effect
-            DoubleAnimation animation = new DoubleAnimation(1.0, 0.95, TimeSpan.FromSeconds(0.1)); // Duration (0.2 seconds) can be adjusted
-            scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, animation);
-            scaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, animation);
+                // Optionally, you can add an animation for a smooth effect
+                DoubleAnimation animation = new DoubleAnimation(1.0, 0.95, TimeSpan.FromSeconds(0.1)); // Duration (0.2 seconds) can be adjusted
+                scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, animation);
+                scaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, animation);
+            }
         }
 
         private void GenerateKeyButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            // Reset the image source and scale of the play button
-            Uri uri = new Uri("pack://application:,,,/Images/button_generic.png");
-            BitmapImage bitmap = new BitmapImage(uri);
-            generateKeyImage.Source = bitmap;
-            ScaleTransform scaleTransform = new ScaleTransform(1, 1);
-            generateKeyGrid.RenderTransform = scaleTransform;
-
-            DoubleAnimation animation = new DoubleAnimation(0.95, 1, TimeSpan.FromSeconds(0.1)); // Duration (0.2 seconds) can be adjusted
-            scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, animation);
-            scaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, animation);
-
-            // Check if the mouse was released within the bounds of the play button
-            Point position = e.GetPosition(generateKeyButton);
-            if (position.X >= 0 && position.Y >= 0 && position.X < generateKeyButton.ActualWidth && position.Y < generateKeyButton.ActualHeight)
+            if (!isSecondaryWindowOpen)
             {
-                //_generateKeyLogic.GenerateKeyButtonClickLogic();
-                KeyDisplay display = new KeyDisplay(_installLogic, "CMCY6-TPV4Y-4HYWP-Q2TFJ-R8BW3", true);
-                display.Show();
+                // Reset the image source and scale of the play button
+                Uri uri = new Uri("pack://application:,,,/Images/button_generic_clicked.png");
+                BitmapImage bitmap = new BitmapImage(uri);
+                generateKeyImage.Source = bitmap;
+                ScaleTransform scaleTransform = new ScaleTransform(1, 1);
+                generateKeyGrid.RenderTransform = scaleTransform;
+
+                DoubleAnimation animation = new DoubleAnimation(0.95, 1, TimeSpan.FromSeconds(0.1)); // Duration (0.2 seconds) can be adjusted
+                scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, animation);
+                scaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, animation);
+
+                // Check if the mouse was released within the bounds of the play button
+                Point position = e.GetPosition(generateKeyButton);
+                if (position.X >= 0 && position.Y >= 0 && position.X < generateKeyButton.ActualWidth && position.Y < generateKeyButton.ActualHeight)
+                {
+                    //_generateKeyLogic.GenerateKeyButtonClickLogic();
+
+                    // Open the secondary window
+                    OpenSecondaryWindow();
+                }
             }
         }
 
         private void GenerateKeyButton_MouseEnter(object sender, MouseEventArgs e)
         {
-            // Play Sound On Mouseover
-            PlaySound("Audio/buttonHover.wav", "buttonHover", buttonClickVolume);
+            if (!isSecondaryWindowOpen)
+            {
+                // Play Sound On Mouseover
+                PlaySound("Audio/buttonHover.wav", "buttonHover", buttonClickVolume);
 
-            // Change the image source to the highlighted version
-            Uri uri = new Uri("pack://application:,,,/Images/button_generic_highlight.png");
-            BitmapImage bitmap = new BitmapImage(uri);
-            generateKeyImage.Source = bitmap;
+                // Change the image source to the highlighted version
+                Uri uri = new Uri("pack://application:,,,/Images/button_generic_highlight.png");
+                BitmapImage bitmap = new BitmapImage(uri);
+                generateKeyImage.Source = bitmap;
+            }
         }
 
         private void GenerateKeyButton_MouseLeave(object sender, MouseEventArgs e)
         {
-            // Reset the image source to the default version
-            Uri uri = new Uri("pack://application:,,,/Images/button_generic.png");
-            BitmapImage bitmap = new BitmapImage(uri);
-            generateKeyImage.Source = bitmap;
+            if (!isSecondaryWindowOpen)
+            {
+                // Reset the image source to the default version
+                Uri uri = new Uri("pack://application:,,,/Images/button_generic.png");
+                BitmapImage bitmap = new BitmapImage(uri);
+                generateKeyImage.Source = bitmap;
+            }
         }
 
         private void DiscordButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)

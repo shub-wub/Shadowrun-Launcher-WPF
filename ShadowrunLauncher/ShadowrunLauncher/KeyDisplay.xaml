@@ -5,23 +5,64 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ShadowrunLauncher"
         mc:Ignorable="d"
-        Title="DisplayKeyForm" Height="135" Width="355" Background="#404040" ResizeMode="NoResize" WindowStyle="None" ShowInTaskbar="False" WindowStartupLocation="CenterScreen">
+        Title="DisplayKeyForm" Height="163" Width="354" Background="Transparent" ResizeMode="NoResize" WindowStyle="None" ShowInTaskbar="False" AllowsTransparency="True" Cursor="/Cursors/cursor.cur">
     <Grid>
-        <GroupBox Header="Windows Live License Key" Margin="14,24,14,0" VerticalAlignment="Top" Foreground="White">
+        <!-- Background image -->
+        <Image HorizontalAlignment="Center" Height="163" VerticalAlignment="Center" Width="354" Source="\Images\keyWindow.png"/>
+        <TextBlock FontFamily="Fonts/#Shadowrun" FontSize="16" Text="SHADOWRUN PRODUCT KEY" Margin="86,51,0,0" Foreground="#FFCED8E0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="209">
+            <TextBlock.Effect> 
+                <DropShadowEffect/>
+            </TextBlock.Effect>
+        </TextBlock>
+
+        <Border Margin="14,24,14,0" VerticalAlignment="Top" BorderBrush="Transparent" CornerRadius="4" BorderThickness="1">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="Background" Value="Transparent"/>
+                </Style>
+            </Border.Style>
+            <Border.RenderTransform>
+                <TransformGroup>
+                    <TranslateTransform X="0" Y="55"/>
+                </TransformGroup>
+            </Border.RenderTransform>
             <StackPanel Orientation="Horizontal">
-                <TextBox Width="50" MaxLength="5" TextAlignment="Center" Margin="5" x:Name="r1"/>
-                <TextBlock Text="-" VerticalAlignment="Center"/>
-                <TextBox Width="50" MaxLength="5" TextAlignment="Center" Margin="5" x:Name="r2"/>
-                <TextBlock Text="-" VerticalAlignment="Center"/>
-                <TextBox Width="50" MaxLength="5" TextAlignment="Center" Margin="5" x:Name="r3"/>
-                <TextBlock Text="-" VerticalAlignment="Center"/>
-                <TextBox Width="50" MaxLength="5" TextAlignment="Center" Margin="5" x:Name="r4"/>
-                <TextBlock Text="-" VerticalAlignment="Center"/>
-                <TextBox Width="50" MaxLength="5" TextAlignment="Center" Margin="5" x:Name="r5"/>
+                <TextBox Width="50" MaxLength="5" TextAlignment="Center" Margin="5" x:Name="r1" Background="Transparent" BorderBrush="#4CABADB3" Foreground="White"/>
+                <TextBlock Text="-" VerticalAlignment="Center" Foreground="White"/>
+                <TextBox Width="50" MaxLength="5" TextAlignment="Center" Margin="5" x:Name="r2" Background="Transparent" BorderBrush="#4CABADB3" Foreground="White"/>
+                <TextBlock Text="-" VerticalAlignment="Center" Foreground="White"/>
+                <TextBox Width="50" MaxLength="5" TextAlignment="Center" Margin="5" x:Name="r3" Background="Transparent" BorderBrush="#4CABADB3" Foreground="White"/>
+                <TextBlock Text="-" VerticalAlignment="Center" Foreground="White"/>
+                <TextBox Width="50" MaxLength="5" TextAlignment="Center" Margin="5" x:Name="r4" Background="Transparent" BorderBrush="#4CABADB3" Foreground="White"/>
+                <TextBlock Text="-" VerticalAlignment="Center" Foreground="White"/>
+                <TextBox Width="50" MaxLength="5" TextAlignment="Center" Margin="5" x:Name="r5" Background="Transparent" BorderBrush="#4CABADB3" Foreground="White"/>
             </StackPanel>
-        </GroupBox>
-        <Grid VerticalAlignment="Bottom">
-            <Button x:Name="copyToClipboardButton" Content="Copy Key and Launch Shadowrun" HorizontalAlignment="Right" Margin="0,0,80,20" Padding="5" Click="copyToClipboardButton_Click" />
-        </Grid>
+        </Border>
+
+        <!--<Grid VerticalAlignment="Bottom">
+            <Button x:Name="copyToClipboardButton" Content="Copy Key and Launch Shadowrun" HorizontalAlignment="Center" Margin="0,2,0,18" Padding="5" Click="copyToClipboardButton_Click" Foreground="White" Background="Transparent"/>
+        </Grid>-->
+
+        <!-- Close Button -->
+        <Button x:Name="closeButton" Tag="close" Margin="326,38,12,110" Padding="0" Background="#00FF0000" BorderBrush="#00707070">
+            <Border BorderBrush="White" BorderThickness="0.5">
+                <Grid x:Name="closeGrid" RenderTransformOrigin="0.5,0.5">
+                    <TextBlock FontFamily="Fonts/#Shadowrun" FontSize="10" Text="X" TextAlignment="Center" Width="12" Foreground="White" Height="12" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold"/>
+                </Grid>
+            </Border>
+        </Button>
+
+        <!-- Copy Key Button -->
+        <Button x:Name="copyToClipboardButton" Tag="copyToClipboard" BorderThickness="0" Margin="96,115,96,16" Background="Transparent" Padding="0" Width="161" Height="32" RenderTransformOrigin="0.5,0.5">
+            <Grid x:Name="copyToClipboardGrid" RenderTransformOrigin="0.5,0.5" >
+                <Image x:Name="discordImage" Source="/Images/button_generic.png"/>
+                <TextBlock Text="Copy Key and Launch Game" Foreground="#FFCBCED6" HorizontalAlignment="Center" TextAlignment="Center" FontSize="11" Width="141" VerticalAlignment="Center"/>
+            </Grid>
+            <Button.Template>
+                <ControlTemplate TargetType="Button">
+                    <ContentPresenter />
+                </ControlTemplate>
+            </Button.Template>
+        </Button>
     </Grid>
 </Window>
