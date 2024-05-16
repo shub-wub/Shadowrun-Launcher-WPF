@@ -11,6 +11,8 @@ using System.IO;
 using System.Windows.Automation;
 using DiscordRPC;
 using DiscordRPC.Message;
+using System.Collections.Generic;
+using System.Windows.Threading;
 
 namespace ShadowrunLauncher
 {
@@ -218,9 +220,65 @@ namespace ShadowrunLauncher
 
         private void PlayBackgroundMusic(string relativePath)
         {
-            // Use the class-level variable directly to set the volume
-            PlaySound(relativePath, "backgroundMusic", backgroundMusicVolume);
+            // Get the MediaPlayer instance for the background music channel
+            MediaPlayer mediaPlayer = soundChannels["backgroundMusic"];
+
+            // Get the absolute path of the audio file
+            string basePath = AppDomain.CurrentDomain.BaseDirectory;
+            string absolutePath = Path.Combine(basePath, relativePath);
+
+            // Check if the file exists
+            if (File.Exists(absolutePath))
+            {
+                // Load the sound file
+                mediaPlayer.Open(new Uri(absolutePath));
+
+                // Set the volume to 0 initially for fade-in effect
+                mediaPlayer.Volume = 0;
+
+                // Play the sound
+                mediaPlayer.Play();
+
+                // Set the MediaEnded event to loop the background music
+                mediaPlayer.MediaEnded += (sender, e) =>
+                {
+                    mediaPlayer.Position = TimeSpan.Zero;
+                    mediaPlayer.Play();
+                };
+
+                // Use a DispatcherTimer to gradually increase the volume for fade-in effect
+                double targetVolume = backgroundMusicVolume;
+                double fadeInDurationSeconds = 5;
+                int fadeSteps = 50;
+                double volumeIncrement = targetVolume / fadeSteps;
+                int interval = (int)(fadeInDurationSeconds * 1000 / fadeSteps);
+
+                DispatcherTimer fadeTimer = new DispatcherTimer
+                {
+                    Interval = TimeSpan.FromMilliseconds(interval)
+                };
+
+                fadeTimer.Tick += (s, args) =>
+                {
+                    if (mediaPlayer.Volume < targetVolume)
+                    {
+                        mediaPlayer.Volume += volumeIncrement;
+                    }
+                    else
+                    {
+                        mediaPlayer.Volume = targetVolume;
+                        fadeTimer.Stop();
+                    }
+                };
+
+                fadeTimer.Start();
+            }
+            else
+            {
+                MessageBox.Show("Background music file not found.");
+            }
         }
+
 
         private void SetBackgroundMusicVolume(double volume)
         {
@@ -240,7 +298,7 @@ namespace ShadowrunLauncher
                 backgroundMusicVolume = volume;
             }
         }
-
+   
         private void StartGlowAnimation()
         {
             Storyboard glowAnimation = (Storyboard)FindResource("GlowAnimation");
