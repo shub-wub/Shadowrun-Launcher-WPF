@@ -10,6 +10,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
@@ -30,6 +31,9 @@ namespace ShadowrunLauncher
             _installLogic = installLogic;
             _generateKeyLogic = new GenerateKeyLogic(installLogic);
             SetKey(key);
+
+            //closeButton.PreviewMouseLeftButtonDown += CloseButton_PreviewMouseLeftButtonDown;
+            closeButton.PreviewMouseLeftButtonUp += CloseButton_PreviewMouseLeftButtonUp;
         }
         private void SetKey(string key)
         {
@@ -49,6 +53,17 @@ namespace ShadowrunLauncher
         private void copyToClipboardButton_Click(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void CloseButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            // Check if the mouse was released within the bounds of the close button
+            Point position = e.GetPosition(closeButton);
+            if (position.X >= 0 && position.Y >= 0 && position.X < closeButton.ActualWidth && position.Y < closeButton.ActualHeight)
+            {
+                // Close the application
+                this.Close();
+            }
         }
     }
 }
