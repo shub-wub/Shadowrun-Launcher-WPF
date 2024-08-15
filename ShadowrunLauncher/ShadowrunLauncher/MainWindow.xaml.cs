@@ -337,52 +337,6 @@ namespace ShadowrunLauncher
             }
         }
 
-        private void OpenSecondaryWindow()
-        {
-            // Set the flag to indicate that the secondary window is open
-            isSecondaryWindowOpen = true;
-
-            // Create an instance of the KeyDisplay window
-            KeyDisplay display = new KeyDisplay(_installLogic, "CMCY6-TPV4Y-4HYWP-Q2TFJ-R8BW3", true);
-
-            // Set the owner of the KeyDisplay window to the main window
-            display.Owner = Application.Current.MainWindow;
-
-            // Calculate the desired position within the main window
-            double desiredLeft = Application.Current.MainWindow.Left + 330; // Adjust the offset as needed
-            double desiredTop = Application.Current.MainWindow.Top + 190; // Adjust the offset as needed
-
-            // Set the position of the secondary window
-            display.Left = desiredLeft;
-            display.Top = desiredTop;
-
-            // Subscribe to the LocationChanged event of the main window
-            EventHandler mainLocationChangedHandler = null;
-            mainLocationChangedHandler = (s, args) =>
-            {
-                // Update the position of the secondary window when the main window is moved
-                if (display.Owner != null)
-                {
-                    Point mainWindowLocation = display.Owner.PointToScreen(new Point(0, 0));
-                    display.Left = mainWindowLocation.X + 330; // Adjust the offset as needed
-                    display.Top = mainWindowLocation.Y + 190; // Adjust the offset as needed
-                }
-            };
-            Application.Current.MainWindow.LocationChanged += mainLocationChangedHandler;
-
-            // Unsubscribe from the LocationChanged event when the secondary window is closed
-            display.Closed += (s, args) =>
-            {
-                // Set the flag to indicate that the secondary window is closed
-                isSecondaryWindowOpen = false;
-
-                Application.Current.MainWindow.LocationChanged -= mainLocationChangedHandler;
-            };
-
-            // Show the KeyDisplay window
-            display.Show();
-        }
-
         private void PlayButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             // Play Sound On Click
@@ -486,12 +440,57 @@ namespace ShadowrunLauncher
                 Point position = e.GetPosition(generateKeyButton);
                 if (position.X >= 0 && position.Y >= 0 && position.X < generateKeyButton.ActualWidth && position.Y < generateKeyButton.ActualHeight)
                 {
-                    //_generateKeyLogic.GenerateKeyButtonClickLogic();
-
+                    isSecondaryWindowOpen = true;
+                    string key = _generateKeyLogic.GenerateKeyButtonClickLogic();
+                    OpenKeyWindow(key);
                     // Open the secondary window
-                    OpenSecondaryWindow();
+                    //OpenSecondaryWindow();
                 }
             }
+        }
+
+        public void OpenKeyWindow(string key)
+        {
+
+            // Create an instance of the KeyDisplay window
+            KeyDisplay display = new KeyDisplay(_installLogic, key, true);
+
+            // Set the owner of the KeyDisplay window to the main window
+            display.Owner = Application.Current.MainWindow;
+
+            // Calculate the desired position within the main window
+            double desiredLeft = Application.Current.MainWindow.Left + 330; // Adjust the offset as needed
+            double desiredTop = Application.Current.MainWindow.Top + 190; // Adjust the offset as needed
+
+            // Set the position of the secondary window
+            display.Left = desiredLeft;
+            display.Top = desiredTop;
+
+            // Subscribe to the LocationChanged event of the main window
+            EventHandler mainLocationChangedHandler = null;
+            mainLocationChangedHandler = (s, args) =>
+            {
+                // Update the position of the secondary window when the main window is moved
+                if (display.Owner != null)
+                {
+                    Point mainWindowLocation = display.Owner.PointToScreen(new Point(0, 0));
+                    display.Left = mainWindowLocation.X + 330; // Adjust the offset as needed
+                    display.Top = mainWindowLocation.Y + 190; // Adjust the offset as needed
+                }
+            };
+            Application.Current.MainWindow.LocationChanged += mainLocationChangedHandler;
+
+            // Unsubscribe from the LocationChanged event when the secondary window is closed
+            display.Closed += (s, args) =>
+            {
+                // Set the flag to indicate that the secondary window is closed
+                isSecondaryWindowOpen = false;
+
+                Application.Current.MainWindow.LocationChanged -= mainLocationChangedHandler;
+            };
+
+            // Show the KeyDisplay window
+            display.Show();
         }
 
         private void GenerateKeyButton_MouseEnter(object sender, MouseEventArgs e)

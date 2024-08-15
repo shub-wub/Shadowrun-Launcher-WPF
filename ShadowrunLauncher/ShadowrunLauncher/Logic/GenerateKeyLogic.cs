@@ -18,7 +18,7 @@ namespace ShadowrunLauncher.Logic
             _installLogic = installLogic;
         }
 
-        internal void GenerateKeyButtonClickLogic()
+        internal string GenerateKeyButtonClickLogic()
         {
             // Fetch and print PCID from the registry at the beginning of the GenerateKey method
             string pcidDecimal = RegistryLogic.GetPcidFromRegistry();
@@ -47,7 +47,7 @@ namespace ShadowrunLauncher.Logic
                 {
                     // TODO
                 }
-                return;
+                return "";
             }
 
             KeyData keyData = GetRandomKeyData();
@@ -55,8 +55,6 @@ namespace ShadowrunLauncher.Logic
             string key = keyData.Key;
             Console.WriteLine($"PCID: {pcid}");
 
-            Console.WriteLine("Updating UI with generated key...");
-            DisplayKey(key);
             // Copy the key to the clipboard
             HelperMethods.CopyToClipboard(key);
 
@@ -77,7 +75,20 @@ namespace ShadowrunLauncher.Logic
             File.WriteAllText("reg.reg", registryModificationContent);
 
             // Import registry modifications from the .reg file
-            Process.Start("reg", "import reg.reg").WaitForExit();
+            ProcessStartInfo psi = new ProcessStartInfo
+            {
+                FileName = "reg",
+                Arguments = "import reg.reg",
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true // Prevents the command prompt window from appearing
+            };
+
+            using (Process process = Process.Start(psi))
+            {
+                process.WaitForExit();
+            }
 
             // Delete Token.bin files
             string[] pathsToCheck = {
@@ -93,6 +104,10 @@ namespace ShadowrunLauncher.Logic
                     File.Delete(filePath);
                 }
             }
+
+            Console.WriteLine("Updating UI with generated key...");
+            return key;
+            //OpenKeyWindow(key);
         }
         public void DeleteToken()
         {
@@ -103,12 +118,6 @@ namespace ShadowrunLauncher.Logic
             {
                 File.Delete(TokenFile);
             }
-        }
-        public void DisplayKey(string key = "GWQJH-FF3YX-D2FBT-9TQF4-BPK97")
-        {
-            KeyDisplay display = new KeyDisplay(_installLogic, key);
-            display.Topmost = true;
-            display.Show();
         }
 
         private List<KeyData> data = new List<KeyData>
