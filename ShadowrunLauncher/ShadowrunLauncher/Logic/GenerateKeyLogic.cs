@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 
 namespace ShadowrunLauncher.Logic
 {
@@ -50,7 +51,7 @@ namespace ShadowrunLauncher.Logic
                 return "";
             }
 
-            KeyData keyData = GetRandomKeyData();
+            KeyData keyData = GetKeyData();
             string pcid = keyData.Pcid;
             string key = keyData.Key;
             Console.WriteLine($"PCID: {pcid}");
@@ -105,9 +106,7 @@ namespace ShadowrunLauncher.Logic
                 }
             }
 
-            Console.WriteLine("Updating UI with generated key...");
             return key;
-            //OpenKeyWindow(key);
         }
         public void DeleteToken()
         {
@@ -162,6 +161,10 @@ namespace ShadowrunLauncher.Logic
             Random random = new Random();
             int index = random.Next(data.Count); // Generate a random index within the range of the data list
             return data[index]; // Return the KeyData object at the random index
+        }
+        private KeyData GetKeyData()
+        {
+            return new KeyData { Pcid = "f6,bb,ef,02,e6,b3,50,45", Key = "R9GJT-87T6K-6KV49-XTX8G-6VBWW" };
         }
     }
     public class KeyData

@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ShadowrunLauncher"
         mc:Ignorable="d"
         Title="DisplayKeyForm" Height="163" Width="354" Background="Transparent" ResizeMode="NoResize" WindowStyle="None" ShowInTaskbar="False" AllowsTransparency="True" Cursor="/Cursors/cursor.cur">
 
@@ -61,10 +60,23 @@
             </Button>
 
             <!-- Copy Key Button -->
-            <Button x:Name="copyToClipboardButton" Tag="copyToClipboard" BorderThickness="0" Margin="96,115,96,16" Background="Transparent" Padding="0" Width="161" Height="32" RenderTransformOrigin="0.5,0.5">
-                <Grid x:Name="copyToClipboardGrid" RenderTransformOrigin="0.5,0.5" >
-                    <Image x:Name="discordImage" Source="/Images/button_generic.png"/>
-                    <TextBlock Text="Copy Key and Launch Game" Foreground="#FFCBCED6" HorizontalAlignment="Center" TextAlignment="Center" FontSize="11" Width="141" VerticalAlignment="Center"/>
+            <Button x:Name="copyActivateButton" Tag="copyActivate" BorderThickness="0" Margin="14,114,179,17" Background="Transparent" Padding="0" Width="161" Height="32" RenderTransformOrigin="0.5,0.5">
+                <Grid x:Name="copyActivateGrid" RenderTransformOrigin="0.5,0.5" >
+                    <Image x:Name="copyActivateImage" Source="/Images/button_generic.png"/>
+                    <TextBlock Text="Copy Key and Activate Game" Foreground="#FFCBCED6" HorizontalAlignment="Center" TextAlignment="Center" FontSize="11" Width="141" VerticalAlignment="Center"/>
+                </Grid>
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <ContentPresenter />
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+
+            <!-- Next Button -->
+            <Button x:Name="nextButton" Tag="next" BorderThickness="0" Margin="229,114,20,17" Background="Transparent" Padding="0" Height="32" RenderTransformOrigin="0.5,0.5">
+                <Grid x:Name="nextGrid" RenderTransformOrigin="0.5,0.5" >
+                    <Image x:Name="nextImage" Source="/Images/button_generic.png"/>
+                    <TextBlock Text="Next" Foreground="#FFCBCED6" HorizontalAlignment="Center" TextAlignment="Center" FontSize="11" Width="105" VerticalAlignment="Center"/>
                 </Grid>
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
