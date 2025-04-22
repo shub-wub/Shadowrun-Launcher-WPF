@@ -13,11 +13,18 @@ using DiscordRPC;
 using DiscordRPC.Message;
 using System.Collections.Generic;
 using System.Windows.Threading;
+using System.Runtime.InteropServices;
+using System.Net;
 
 namespace ShadowrunLauncher
 {
     public partial class MainWindow : Window
     {
+        [DllImport("Kernel32")]
+        public static extern void AllocConsole();
+
+        [DllImport("Kernel32", SetLastError = true)]
+        public static extern void FreeConsole();
         private bool isDragging = false;
         private Point startPoint;
         private InstallLogic _installLogic;
@@ -40,12 +47,13 @@ namespace ShadowrunLauncher
             InitializeComponent();
             InitializeSoundChannels();
             StartGlowAnimation();
+            AllocConsole();
 
             MouseLeftButtonDown += MainWindow_MouseLeftButtonDown;
             MouseMove += MainWindow_MouseMove;
             MouseLeftButtonUp += MainWindow_MouseLeftButtonUp;
 
-            PlayBackgroundMusic("Audio/backgroundAmbience.wav");
+            PlayBackgroundMusic("Audio/backgroundAmbience.wav", true);
 
             // Buttons
             playButton.PreviewMouseLeftButtonDown += PlayButton_PreviewMouseLeftButtonDown;
@@ -218,7 +226,7 @@ namespace ShadowrunLauncher
             }
         }
 
-        private void PlayBackgroundMusic(string relativePath)
+        private void PlayBackgroundMusic(string relativePath, bool start)
         {
             // Get the MediaPlayer instance for the background music channel
             MediaPlayer mediaPlayer = soundChannels["backgroundMusic"];
@@ -236,8 +244,17 @@ namespace ShadowrunLauncher
                 // Set the volume to 0 initially for fade-in effect
                 mediaPlayer.Volume = 0;
 
-                // Play the sound
-                mediaPlayer.Play();
+                if(start)
+                {
+                    // Play the sound
+                    mediaPlayer.Play();
+                }
+                else
+                {
+                    // Stop the sound
+                    mediaPlayer.Stop();
+                    return;
+                }
 
                 // Set the MediaEnded event to loop the background music
                 mediaPlayer.MediaEnded += (sender, e) =>
@@ -375,7 +392,111 @@ namespace ShadowrunLauncher
             if (position.X >= 0 && position.Y >= 0 && position.X < playButton.ActualWidth && position.Y < playButton.ActualHeight)
             {
                 // Play the application
+                PlayBackgroundMusic("Audio/backgroundAmbience.wav", false);
                 _installLogic.PlayButtonClickLogic();
+
+                // Test case to get a value
+                //float initialValue = MemoryEditor.GetFloatValue("Shadowrun", (IntPtr)0x00B47378, null);
+                //Console.WriteLine($"initial const FOV for 4:3 ratio: {initialValue}");
+                //float initialValue2 = MemoryEditor.GetFloatValue("Shadowrun", (IntPtr)0x00B280C8, null);
+                //Console.WriteLine($"initial const FOV for other ratio: {initialValue2}");
+                //float initialValue = MemoryEditor.GetFloatValue("Shadowrun", (IntPtr)0x00B47378, null);
+                //float initialValue3 = MemoryEditor.GetFloatValue("Shadowrun", (IntPtr)0x00e79898, [0x10, 0x40]);
+                //uint[] offsets = { 0x40, 0x10 };  // Offsets to apply
+                //IntPtr baseAddress = (IntPtr)0x00E79898;  // Base address in Shadowrun.exe
+                //float result = MemoryEditor.GetFloatValue("Shadowrun", baseAddress, offsets);
+                //Console.WriteLine($"Final float value: {result}");
+                //Console.WriteLine($"The value at the address is: {initialValue3}");
+                //float initialValue4 = MemoryEditor.GetFloatValue("Shadowrun", (IntPtr)0x00e79898, [0x40, 0x10]);
+                //Console.WriteLine($"The value at the address is: {initialValue4}");
+
+                // Set the value in the process's memory
+
+
+                // const FOV for 4:3 ratio
+                //MemoryEditor.SetFloatValue("Shadowrun", (IntPtr)0x00B47378, null, 2.4f);
+                // const FOV for other ratio
+                //MemoryEditor.SetFloatValue("Shadowrun", (IntPtr)0x00B280C8, null, 2.4f);
+                // FOV Ratio (generated)
+                //MemoryEditor.SetFloatValue("Shadowrun", (IntPtr)0x00e79898, new uint[] { 0x44, 0x10 }, newValue);
+                // FOV (generated)
+                //MemoryEditor.SetFloatValue("Shadowrun", (IntPtr)0x00e79898, [0x40, 0x10], 2.4f);
+
+                /*using var memoryEditor = new MemoryEditor("Shadowrun");
+                {
+                    // FOV (generated)
+                    nint fov = memoryEditor.ResolvePointerChain(0x00e79898, [0x40, 0x10]);
+                    // In-game FOV (generated)
+                    nint inGameFov = memoryEditor.ResolvePointerChain(0x00e294f0, [0x5c, 0x164]);
+                    memoryEditor[fov] = 2.0f;    // Write a float
+                    memoryEditor[inGameFov] = 2.0f;    // Write a float
+                    // Writing values
+                    //memoryEditor[address] = 42;         // Write an integer
+                    //memoryEditor[address] = 123.45f;    // Write a float
+                    //memoryEditor[address] = "Hello";   // Write a string
+                    //memoryEditor[address] = new byte[] { 0x90, 0x90 }; // Write a byte array
+                    //memoryEditor[address] = (5, true); // Set the 5th bit to true
+                    // Reading values
+                    //int intValue = memoryEditor[address].As<int>();
+                    //float floatValue = memoryEditor[address].As<float>();
+                    //string stringValue = memoryEditor[address].As<string>();
+                }*/
+
+                /*using (var memedit = new MemoryEditor2("Shadowrun"))
+                {
+                    int getprocessid = memedit.GetProcessID();
+                    Process current = memedit.CurrentProcess;
+
+                    // const FOV for 4:3 ratio
+                    nint constFov43 = memedit.CheatTable(0x00B47378);
+                    // const FOV for other ratio
+                    nint consstFovOther = memedit.CheatTable(0x00B280C8);
+                    // FOV Ratio (generated)
+                    nint fovRatio = memedit.CheatTable(0x00e79898, [0x44, 0x10]);
+                    // FOV (generated)
+                    nint fov = memedit.CheatTable(0x00e79898, [0x40, 0x10]);
+                    // In-game FOV (generated)
+                    nint inGameFov = memedit.CheatTable(0x00e294f0, [0x5c, 0x164]);
+                    // Calculated FOV Horizontal (generated)
+                    nint calcFovHoriz = memedit.CheatTable(0x00e294f0, [0, 0x164]);
+                    // Calculated FOV Vertical (generated)
+                    nint calcFovVert = memedit.CheatTable(0x00e294f0, [0x14, 0x164]);
+
+                    Console.WriteLine("initial values");
+                    Console.WriteLine(memedit.GetFloatFromMemory(getprocessid, constFov43));
+                    Console.WriteLine(memedit.GetFloatFromMemory(getprocessid, consstFovOther));
+                    Console.WriteLine(memedit.GetFloatFromMemory(getprocessid, fovRatio));
+                    Console.WriteLine(memedit.GetFloatFromMemory(getprocessid, fov));
+                    Console.WriteLine(memedit.GetFloatFromMemory(getprocessid, inGameFov));
+                    Console.WriteLine(memedit.GetFloatFromMemory(getprocessid, calcFovHoriz));
+                    Console.WriteLine(memedit.GetFloatFromMemory(getprocessid, calcFovVert));
+
+                    Console.WriteLine("after values");
+                    //Console.WriteLine(memedit.SetFloatValue(getprocessid, constFov43, 2.0f));
+                    //Console.WriteLine(memedit.SetFloatValue(getprocessid, consstFovOther, 2.0f));
+                    Console.WriteLine(memedit.GetFloatFromMemory(getprocessid, constFov43));
+                    Console.WriteLine(memedit.GetFloatFromMemory(getprocessid, consstFovOther));
+                    Console.WriteLine(memedit.GetFloatFromMemory(getprocessid, fovRatio));
+                    Console.WriteLine(memedit.SetFloatValue(getprocessid, fov, 2.0f));
+                    Console.WriteLine(memedit.SetFloatValue(getprocessid, inGameFov, 2.0f));
+                    Console.WriteLine(memedit.GetFloatFromMemory(getprocessid, calcFovHoriz));
+                    Console.WriteLine(memedit.GetFloatFromMemory(getprocessid, calcFovVert));
+                }*/
+                // In-game FOV (generated)
+                //MemoryEditor.SetFloatValue("Shadowrun", (IntPtr)0x00e294f0, [0x5c, 0x164], 2.4f);
+                // Calculated FOV Horizontal (generated)
+                //MemoryEditor.SetFloatValue("Shadowrun", (IntPtr)0x00e294f0, new uint[] { 0, 0x164 }, newValue);
+                // Calculated FOV Vertical (generated)
+                //MemoryEditor.SetFloatValue("Shadowrun", (IntPtr)0x00e294f0, new uint[] { 0x14, 0x164 }, newValue);
+
+                //float afterValue = MemoryEditor.GetFloatValue("Shadowrun", (IntPtr)0x00B47378, null);
+                //Console.WriteLine($"after const FOV for 4:3 ratio: {afterValue}");
+                //float afterValue2 = MemoryEditor.GetFloatValue("Shadowrun", (IntPtr)0x00B280C8, null);
+                //Console.WriteLine($"after const FOV for other ratio: {afterValue2}");
+                //float afterValue3 = MemoryEditor.GetFloatValue("Shadowrun", (IntPtr)0x00e79898, [0x40, 0x10]);
+                //Console.WriteLine($"The value at the address is: {afterValue3}");
+                //float afterValue4 = MemoryEditor.GetFloatValue("Shadowrun", (IntPtr)0x00e79898, [0x40, 0x10]);
+                //Console.WriteLine($"The value at the address is: {afterValue4}");
             }
         }
 
@@ -442,6 +563,7 @@ namespace ShadowrunLauncher
                 {
                     isSecondaryWindowOpen = true;
                     string key = _generateKeyLogic.GenerateKeyButtonClickLogic();
+                    //OpenKeyWindow("FXRHK-T8PDY-FHBCH-G6YJG-XF8PJ");
                     OpenKeyWindow(key);
                     // Open the secondary window
                     //OpenSecondaryWindow();

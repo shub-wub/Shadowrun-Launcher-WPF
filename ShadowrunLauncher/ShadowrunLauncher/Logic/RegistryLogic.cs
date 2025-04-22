@@ -64,7 +64,24 @@ namespace ShadowrunLauncher.Logic
                 Console.WriteLine($"Error setting PCID in registry: {e}");
             }
         }
-        internal static bool SrPcidChangeExists()
+        internal static void SetPcidBackupInRegistry(string decimalValue)
+        {
+            try
+            {
+                using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\Classes\SOFTWARE\Microsoft\XLive", true))
+                {
+                    if (key != null)
+                    {
+                        key.SetValue("SRPCIDBACKUP", decimalValue, RegistryValueKind.QWord);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Error setting PCID in registry: {e}");
+            }
+        }
+        internal static bool SrPcidBackupChangeExists()
         {
             try
             {

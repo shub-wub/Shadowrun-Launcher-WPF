@@ -6,6 +6,8 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>
@@ -33,6 +35,12 @@
   <ItemGroup>
     <Resource Include="Cursors\cursor.cur" />
     <Resource Include="Fonts\Shadowrun Regular.ttf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="LiveTokenHelper.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
