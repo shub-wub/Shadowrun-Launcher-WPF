@@ -193,6 +193,18 @@ public class MemoryEditor2 : IDisposable
     }
     internal nint CheatTable(nint relativeAddress, List<int> offsets = null)
     {
+        // Ensure CurrentProcess is not null before accessing MainModule
+        if (CurrentProcess == null)
+        {
+            throw new InvalidOperationException("CurrentProcess is null. Ensure the process is initialized correctly.");
+        }
+
+        // Ensure MainModule is not null before accessing BaseAddress
+        if (CurrentProcess.MainModule == null)
+        {
+            throw new InvalidOperationException("MainModule is null. Ensure the process has a valid main module.");
+        }
+
         // Get the base address from the process module
         nint baseAddress = CurrentProcess.MainModule.BaseAddress;
 

@@ -64,6 +64,10 @@ namespace ShadowrunLauncher
         }
         private void SetKey(string key)
         {
+            if(key != null)
+            {
+                return;
+            }
             currentkey = key;
             string[] Keysector = key.Split('-');
             r1.Text = Keysector[0];
