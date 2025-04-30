@@ -124,21 +124,21 @@ namespace ShadowrunLauncher
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             // Set the presence details when the window is loaded
-            var presence = new RichPresence()
-            {
-                Details = "Ranked",
-                State = "4v4",
-                Assets = new Assets()
+                var presence = new RichPresence()
                 {
-                    LargeImageKey = "discordappicon",
-                    LargeImageText = "Shadowrun 2007"
-                },
-                Party = new Party()
-                {
-                    Size = 1,   // Number of people currently in the party (e.g., the player)
-                    Max = 8     // Maximum number of people allowed in the party
-                }
-            };
+                    Details = "Ranked",
+                    State = "4v4",
+                    Assets = new Assets()
+                    {
+                        LargeImageKey = "discordappicon",
+                        LargeImageText = "Shadowrun 2007"
+                    },
+                    Party = new Party()
+                    {
+                        Size = 1,   // Number of people currently in the party (e.g., the player)
+                        Max = 8     // Maximum number of people allowed in the party
+                    }
+                };
 
             UpdatePresence(presence);
         }
@@ -564,7 +564,17 @@ namespace ShadowrunLauncher
                     isSecondaryWindowOpen = true;
                     string key = _generateKeyLogic.GenerateKeyButtonClickLogic();
                     //OpenKeyWindow("FXRHK-T8PDY-FHBCH-G6YJG-XF8PJ");
-                    OpenKeyWindow(key);
+                    if (key != string.Empty)
+                    {
+                        OpenKeyWindow(key);
+                    }
+                    else
+                    {
+                        isSecondaryWindowOpen = false;
+                        //TODO: Make UI De-Press the button
+
+
+                    }
                     // Open the secondary window
                     //OpenSecondaryWindow();
                 }
@@ -579,7 +589,7 @@ namespace ShadowrunLauncher
 
             // Set the owner of the KeyDisplay window to the main window
             display.Owner = Application.Current.MainWindow;
-
+            display.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             // Calculate the desired position within the main window
             double desiredLeft = Application.Current.MainWindow.Left + 330; // Adjust the offset as needed
             double desiredTop = Application.Current.MainWindow.Top + 190; // Adjust the offset as needed
