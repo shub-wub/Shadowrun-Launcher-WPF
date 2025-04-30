@@ -16,6 +16,7 @@
 	<None Remove="Audio\buttonClick.wav" />
 	<None Remove="Audio\buttonHover.wav" />
 	<None Remove="Fonts\Shadowrun Regular.ttf" />
+	<None Remove="LiveTokenHelper.dll" />
 	<Content Include="Audio\backgroundAmbience.wav">
 	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	</Content>
@@ -29,22 +30,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Costura.Fody" Version="6.0.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="DiscordRichPresence" Version="1.2.1.24" />
   </ItemGroup>
 
   <ItemGroup>
     <Resource Include="Cursors\cursor.cur" />
     <Resource Include="Fonts\Shadowrun Regular.ttf" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="LiveTokenHelper.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>
