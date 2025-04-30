@@ -8,6 +8,7 @@
     <UseWPF>true</UseWPF>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <PlatformTarget>x86</PlatformTarget>
+    <ApplicationIcon>2.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,6 +18,7 @@
 	<None Remove="Audio\buttonHover.wav" />
 	<None Remove="Fonts\Shadowrun Regular.ttf" />
 	<None Remove="LiveTokenHelper.dll" />
+	<Content Include="2.ico" />
 	<Content Include="Audio\backgroundAmbience.wav">
 	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	</Content>
