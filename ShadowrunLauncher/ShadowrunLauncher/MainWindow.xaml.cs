@@ -566,7 +566,9 @@ namespace ShadowrunLauncher
                     //OpenKeyWindow("FXRHK-T8PDY-FHBCH-G6YJG-XF8PJ");
                     if (key != string.Empty)
                     {
-                        OpenKeyWindow(key);
+                        // no longer need to open the key menu because it auto activates without them needing to enter the key
+
+                        //OpenKeyWindow(key);
                     }
                     else
                     {

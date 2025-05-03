@@ -15,7 +15,7 @@ namespace ShadowrunLauncher.Logic
     internal class GenerateKeyLogic
     {
         private InstallLogic _installLogic;
-        [DllImport("LiveTokenHelper.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
+        [DllImport("xlive.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall, EntryPoint = "#5026")]
         public static extern uint XLiveSetSponsorToken([MarshalAs(UnmanagedType.LPWStr)] string pwszToken, uint dwTitleId);
 
         public GenerateKeyLogic(InstallLogic installLogic)
@@ -57,9 +57,9 @@ namespace ShadowrunLauncher.Logic
             }
 
             KeyData activationKeyData = GetKeyData();
-            string pcid = activationKeyData.Pcid;
+            string activationPcid = activationKeyData.Pcid;
             string key = activationKeyData.Key;
-            Console.WriteLine($"PCID: {pcid}");
+            Console.WriteLine($"PCID: {activationPcid}");
 
             // Copy the key to the clipboard
             //HelperMethods.CopyToClipboard(key);
@@ -67,26 +67,33 @@ namespace ShadowrunLauncher.Logic
             /*if (RegistryLogic.SrPcidBackupChangeExists())
             {
                 Console.WriteLine("IT IS HERE");
-                RegistryLogic.SetPcidInRegistry(pcid);
+                RegistryLogic.SetPcidInRegistry(activationPcid);
             }
             else
             {
                 Console.WriteLine("IT IS NOT HERE");
-                RegistryLogic.SetPcidInRegistry(pcid);
-                RegistryLogic.SetPcidBackupInRegistry(currentPcid);
+                RegistryLogic.SetPcidInRegistry(activationPcid);
+                RegistryLogic.SetPcidBackupInRegistry(playerPcid);
             }*/
 
             string registryModificationContent;
             if (RegistryLogic.SrPcidBackupChangeExists())
             {
                 Console.WriteLine("IT IS HERE");
-                registryModificationContent = $"Windows Registry Editor Version 5.00\n\n[HKEY_CURRENT_USER\\Software\\Classes\\SOFTWARE\\Microsoft\\XLive]\n\"PCID\"=hex(b):{pcid}";
+                //RegistryLogic.SetPcidInRegistry(activationPcid);
+                // if they already have a backup PCID, just update their activation PCID
+                //registryModificationContent = $"Windows Registry Editor Version 5.00\n\n[HKEY_CURRENT_USER\\Software\\Classes\\SOFTWARE\\Microsoft\\XLive]\n\"PCID\"=hex(b):{activationPcid}";
             }
             else
             {
                 Console.WriteLine("IT IS NOT HERE");
-                registryModificationContent = $"Windows Registry Editor Version 5.00\n\n[HKEY_CURRENT_USER\\Software\\Classes\\SOFTWARE\\Microsoft\\XLive]\n\"PCID\"=hex(b):{pcid}\n\"SRPCIDBACKUP\"=hex(b):{currentPcid}";
+                //RegistryLogic.SetPcidInRegistry(activationPcid);
+                //RegistryLogic.SetPcidBackupInRegistry(playerPcid);
+                // if they do not have a backup, then backup their player PCID and set the activationPcid
+                RegistryLogic.SetPcidBackupInRegistry(currentPcidDecimal);
+                //registryModificationContent = $"Windows Registry Editor Version 5.00\n\n[HKEY_CURRENT_USER\\Software\\Classes\\SOFTWARE\\Microsoft\\XLive]\n\"PCID\"=hex(b):{activationPcid}\n\"SRPCIDBACKUP\"=hex(b):{playerPcid}";
             }
+            registryModificationContent = $"Windows Registry Editor Version 5.00\n\n[HKEY_CURRENT_USER\\Software\\Classes\\SOFTWARE\\Microsoft\\XLive]\n\"PCID\"=hex(b):{activationPcid}";
 
             // Write registry modification content to .reg file
             File.WriteAllText("reg.reg", registryModificationContent);
@@ -122,8 +129,8 @@ namespace ShadowrunLauncher.Logic
                 }
             }
 
-            byte[] convertedTitleID = Convert.FromHexString("4d5307d6");
-            Array.Reverse(convertedTitleID);
+            //byte[] convertedTitleID = Convert.FromHexString("4d5307d6");
+            //Array.Reverse(convertedTitleID);
 
             XLiveSetSponsorToken(key, 1297287126);
 
