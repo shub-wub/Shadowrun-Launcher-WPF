@@ -20,6 +20,7 @@ namespace ShadowrunLauncher
 {
     public partial class MainWindow : Window
     {
+
         [DllImport("Kernel32")]
         public static extern void AllocConsole();
 

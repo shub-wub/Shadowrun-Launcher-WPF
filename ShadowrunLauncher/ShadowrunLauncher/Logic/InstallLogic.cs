@@ -1,14 +1,8 @@
 ﻿using ShadowrunLauncher.Models;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.NetworkInformation;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -59,13 +53,12 @@ namespace ShadowrunLauncher.Logic
             _mainWindow = mainWindow;
         }
 
-        internal void PlayButtonClickLogic()
+        internal async void PlayButtonClickLogic()
         {
-            if (File.Exists(gameExe) && Status == LauncherStatus.ready)
+            if (IsGameInstalled() && Status == LauncherStatus.ready)
             {
                 try
                 {
-                    // For PCID Change
                     string srPcidBackupValue = RegistryLogic.GetSrPcidBackupFromRegistry();
                     if (!string.IsNullOrEmpty(srPcidBackupValue))
                     {
@@ -85,20 +78,14 @@ namespace ShadowrunLauncher.Logic
                 {
                     Console.WriteLine($"Exception occurred: {ex}");
                 }
-
-                //Close();
             }
             else if (Status == LauncherStatus.download)
             {
-                CheckForUpdates(false);
+                await CheckForUpdates(false);
             }
-            /*else
-            {
-                CheckForUpdates(false);
-            }*/
         }
 
-        internal void CheckForUpdates(bool updateCheck)
+        internal async Task CheckForUpdates(bool updateCheck)
         {
             if (File.Exists(localVersionFile) && updateCheck)
             {
@@ -107,14 +94,15 @@ namespace ShadowrunLauncher.Logic
                 {
                     _mainWindow.VersionText.Content = localVersion.ToString();
                 });
+
                 try
                 {
-                    WebClient webClient = new WebClient();
-                    GameVersion onlineVersion = new GameVersion(webClient.DownloadString(onlineVersionFile));
+                    using HttpClient client = new HttpClient();
+                    GameVersion onlineVersion = new GameVersion(await client.GetStringAsync(onlineVersionFile));
 
                     if (onlineVersion.IsDifferentThan(localVersion))
                     {
-                        InstallGameFiles(true, onlineVersion);
+                        await InstallGameFiles(true, onlineVersion);
                     }
                     else
                     {
@@ -130,48 +118,51 @@ namespace ShadowrunLauncher.Logic
             else if (Status == LauncherStatus.download && !updateCheck)
             {
                 Status = LauncherStatus.download;
-                InstallGameFiles(false, GameVersion.zero);
+                await InstallGameFiles(false, GameVersion.zero);
             }
-            /*else
-            {
-                Status = LauncherStatus.download;
-                _mainWindow.playButton.IsEnabled = false;
-                //InstallGameFiles(false, Version.zero);
-            }*/
         }
 
-        private void InstallGameFiles(bool _isUpdate, GameVersion _onlineVersion)
+        private async Task InstallGameFiles(bool _isUpdate, GameVersion _onlineVersion)
         {
             try
             {
                 _mainWindow.playButton.IsEnabled = false;
-                WebClient webClientGame = new WebClient();
-                WebClient webClientGfwl = new WebClient();
-                WebClient webClientDirectX = new WebClient();
-                if (_isUpdate)
-                {
-                    Status = LauncherStatus.downloadingUpdate;
-                }
-                else
-                {
-                    Status = LauncherStatus.downloadingGame;
-                    _onlineVersion = new GameVersion(webClientGame.DownloadString(onlineVersionFile));
-                }
-                webClientGame.DownloadFileCompleted += new AsyncCompletedEventHandler(DownloadGameCompletedCallback);
-                webClientGame.DownloadFileAsync(new Uri(onlineBuildZip), gameZip, _onlineVersion);
+                Status = _isUpdate ? LauncherStatus.downloadingUpdate : LauncherStatus.downloadingGame;
 
-                // if the user doesn't already have gfwl install it
-                if (File.Exists(gfwlProgramFileExe) == false)
+                using HttpClient httpClient = new HttpClient();
+
+                if (!_isUpdate)
                 {
-                    webClientGfwl.DownloadFileCompleted += new AsyncCompletedEventHandler(DownloadGfwlCompletedCallback);
-                    webClientGfwl.DownloadFileAsync(new Uri(onlineGfwlZip), gfwlZip);
+                    string versionStr = await httpClient.GetStringAsync(onlineVersionFile);
+                    _onlineVersion = new GameVersion(versionStr);
                 }
 
-                if (!IsDirectX9Installed())
+                var gameTask = DownloadFileAsync(httpClient, onlineBuildZip, gameZip);
+                var gfwlTask = File.Exists(gfwlProgramFileExe)
+                    ? Task.CompletedTask
+                    : DownloadFileAsync(httpClient, onlineGfwlZip, gfwlZip);
+
+                var dxTask = IsDirectX9Installed()
+                    ? Task.CompletedTask
+                    : DownloadFileAsync(httpClient, directXInstall, directXInstallFileName);
+
+                await Task.WhenAll(gameTask, gfwlTask, dxTask);
+
+                if (File.Exists(gfwlZip)) DownloadGfwlCompletedCallback();
+                if (File.Exists(directXExe)) DownloadDirectXCompletedCallback();
+
+                string onlineVersionStr = _onlineVersion.ToString();
+                ZipArchiveExtensions.ExtractToDirectory(gameZip, releaseFilesPath, overwrite: true);
+                File.Delete(gameZip);
+                File.WriteAllText(Path.Combine(releaseFilesPath, versionFileName), onlineVersionStr);
+
+                _mainWindow.Dispatcher.Invoke(() =>
                 {
-                    webClientDirectX.DownloadFileCompleted += new AsyncCompletedEventHandler(DownloadDirectXCompletedCallback);
-                    webClientDirectX.DownloadFileAsync(new Uri(directXInstall), directXInstallFileName);
-                }
+                    _mainWindow.VersionText.Content = onlineVersionStr;
+                });
+
+                Status = LauncherStatus.ready;
+                _mainWindow.playButton.IsEnabled = true;
             }
             catch (Exception ex)
             {
@@ -179,165 +170,120 @@ namespace ShadowrunLauncher.Logic
                 MessageBox.Show($"Error installing game files: {ex}");
             }
         }
-        private void DownloadDirectXCompletedCallback(object sender, AsyncCompletedEventArgs e)
+
+        private async Task DownloadFileAsync(HttpClient client, string url, string outputPath)
+        {
+            using var response = await client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
+            response.EnsureSuccessStatusCode();
+
+            await using var fs = new FileStream(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
+            await response.Content.CopyToAsync(fs);
+        }
+
+        private void DownloadDirectXCompletedCallback()
         {
             try
             {
                 Console.WriteLine($"Attempting to run: {directXInstallFileName}");
 
-                if (Directory.Exists(releaseFilesPath))
+                if (Directory.Exists(releaseFilesPath) && File.Exists(directXExe))
                 {
-                    if (File.Exists(directXExe))
-                    {
-                        ProcessStartInfo startInfo = new ProcessStartInfo(directXExe);
-                        startInfo.Verb = "runas"; // Run as administrator
-                        Process directxProcess = Process.Start(startInfo);
-
-                        // Wait for the process to finish
-                        directxProcess.WaitForExit();
-
-                        // Close the process
-                        directxProcess.Close();
-                    }
-                    else
-                    {
-                        Status = LauncherStatus.failed;
-                        MessageBox.Show("DirectX exe not found in releases directory", "Warning", MessageBoxButton.OK);
-                    }
+                    var startInfo = new ProcessStartInfo(directXExe) { Verb = "runas" };
+                    var proc = Process.Start(startInfo);
+                    proc.WaitForExit();
+                    proc.Close();
                 }
                 else
                 {
                     Status = LauncherStatus.failed;
-                    MessageBox.Show("Your game is not installed", "Warning", MessageBoxButton.OK);
+                    MessageBox.Show("DirectX executable not found or game not installed.");
                 }
             }
             catch (Exception ex)
             {
                 Status = LauncherStatus.failed;
-                MessageBox.Show($"Error finishing DirectX download: {ex}");
+                MessageBox.Show($"Error finishing DirectX install: {ex}");
             }
         }
-        private void DownloadGfwlCompletedCallback(object sender, AsyncCompletedEventArgs e)
+
+        private void DownloadGfwlCompletedCallback()
         {
             try
             {
-                ZipArchiveExtensions.ExtractToDirectory(sourceDirectoryName: gfwlZip, destinationDirectoryName: releaseFilesPath, overwrite: true);
+                ZipArchiveExtensions.ExtractToDirectory(gfwlZip, releaseFilesPath, overwrite: true);
                 File.Delete(gfwlZip);
 
                 Console.WriteLine($"Attempting to run: {gfwlExe}");
 
-                if (Directory.Exists(releaseFilesPath))
+                if (Directory.Exists(releaseFilesPath) && File.Exists(gfwlExe))
                 {
-                    if (File.Exists(gfwlExe))
-                    {
-                        ProcessStartInfo startInfo = new ProcessStartInfo(gfwlExe);
-                        startInfo.Verb = "runas"; // Run as administrator
-                        Process gfwlProcess = Process.Start(startInfo);
-
-                        // Wait for the process to finish
-                        gfwlProcess.WaitForExit();
-
-                        // Close the process
-                        gfwlProcess.Close();
-                    }
-                    else
-                    {
-                        Status = LauncherStatus.failed;
-                        MessageBox.Show("GFWL exe not found in releases directory", "Warning", MessageBoxButton.OK);
-                    }
+                    var startInfo = new ProcessStartInfo(gfwlExe) { Verb = "runas" };
+                    var proc = Process.Start(startInfo);
+                    proc.WaitForExit();
+                    proc.Close();
                 }
                 else
                 {
                     Status = LauncherStatus.failed;
-                    MessageBox.Show("Your game is not installed", "Warning", MessageBoxButton.OK);
+                    MessageBox.Show("GFWL executable not found or game not installed.");
                 }
             }
             catch (Exception ex)
             {
                 Status = LauncherStatus.failed;
-                MessageBox.Show($"Error finishing GFWL download: {ex}");
+                MessageBox.Show($"Error finishing GFWL install: {ex}");
             }
         }
-        private void DownloadGameCompletedCallback(object sender, AsyncCompletedEventArgs e)
+
+        public bool IsGameInstalled()
         {
+            if (!File.Exists(localVersionFile))
+                return false;
+
+            GameVersion localVersion = new GameVersion(File.ReadAllText(localVersionFile));
+            _mainWindow.Dispatcher.Invoke(() =>
+            {
+                _mainWindow.VersionText.Content = localVersion.ToString();
+            });
+
             try
             {
-                string onlineVersion = ((GameVersion)e.UserState).ToString();
-                ZipArchiveExtensions.ExtractToDirectory(sourceDirectoryName: gameZip, destinationDirectoryName: releaseFilesPath, overwrite: true);
-                File.Delete(gameZip);
+                using HttpClient client = new HttpClient();
+                var request = new HttpRequestMessage(HttpMethod.Get, onlineVersionFile);
+                var response = client.Send(request);
+                response.EnsureSuccessStatusCode();
 
-                File.WriteAllText(Path.Combine(releaseFilesPath, versionFileName), onlineVersion);
+                string versionString = response.Content.ReadAsStringAsync().Result;
+                GameVersion onlineVersion = new GameVersion(versionString);
 
-                _mainWindow.Dispatcher.Invoke(() =>
-                {
-                    _mainWindow.VersionText.Content = onlineVersion;
-                });
-                Status = LauncherStatus.ready;
-                _mainWindow.playButton.IsEnabled = true;
+                return !onlineVersion.IsDifferentThan(localVersion);
             }
-            catch (Exception ex)
+            catch
             {
-                Status = LauncherStatus.failed;
-                MessageBox.Show($"Error finishing game download: {ex}");
+                return false;
             }
         }
+
 
         public bool IsGfwlInstalled()
         {
             return File.Exists(gfwlProgramFileExe);
         }
 
-        public bool IsGameInstalled()
-        {
-            if (File.Exists(localVersionFile))
-            {
-                GameVersion localVersion = new GameVersion(File.ReadAllText(localVersionFile));
-                _mainWindow.Dispatcher.Invoke(() =>
-                {
-                    _mainWindow.VersionText.Content = localVersion.ToString();
-                });
-                WebClient webClient = new WebClient();
-                GameVersion onlineVersion = new GameVersion(webClient.DownloadString(onlineVersionFile));
-
-                if (onlineVersion.IsDifferentThan(localVersion))
-                {
-                    return false;
-                }
-                else
-                {
-                    return true;
-                }
-            }
-            else
-            {
-                return false;
-            }
-        }
-
         public bool IsDirectX9Installed()
         {
             string system32Directory = Path.Combine(Environment.GetEnvironmentVariable("WINDIR"), "System32");
-            bool foundD3dx9 = false;
-            bool foundD3d9 = false;
+            bool foundD3dx9 = false, foundD3d9 = false;
 
-            foreach (string filename in Directory.GetFiles(system32Directory, "*.dll"))
+            foreach (var file in Directory.GetFiles(system32Directory, "*.dll"))
             {
-                string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(filename);
-                if (fileNameWithoutExtension.StartsWith("d3dx9_", StringComparison.OrdinalIgnoreCase))
-                {
-                    foundD3dx9 = true;
-                }
-                else if (fileNameWithoutExtension.Equals("d3d9", StringComparison.OrdinalIgnoreCase))
-                {
-                    foundD3d9 = true;
-                }
+                string name = Path.GetFileNameWithoutExtension(file);
+                if (name.StartsWith("d3dx9_", StringComparison.OrdinalIgnoreCase)) foundD3dx9 = true;
+                else if (name.Equals("d3d9", StringComparison.OrdinalIgnoreCase)) foundD3d9 = true;
 
-                if (foundD3dx9 && foundD3d9)
-                {
-                    return true; // Both DirectX 9 DLLs found
-                }
+                if (foundD3dx9 && foundD3d9) return true;
             }
-            return false; // Either or both DLLs are missing
+            return false;
         }
 
         internal LauncherStatus Status
@@ -346,32 +292,19 @@ namespace ShadowrunLauncher.Logic
             set
             {
                 _status = value;
-                string buttonText = "";
-                switch (_status)
+                string text = _status switch
                 {
-                    case LauncherStatus.ready:
-                        buttonText = "Play";
-                        break;
-                    case LauncherStatus.download:
-                        buttonText = "Download";
-                        break;
-                    case LauncherStatus.failed:
-                        buttonText = "Update Failed - Retry";
-                        break;
-                    case LauncherStatus.downloadingGame:
-                        buttonText = "Downloading Game";
-                        break;
-                    case LauncherStatus.downloadingUpdate:
-                        buttonText = "Downloading Update";
-                        break;
-                    default:
-                        break;
-                }
+                    LauncherStatus.ready => "Play",
+                    LauncherStatus.download => "Download",
+                    LauncherStatus.failed => "Update Failed - Retry",
+                    LauncherStatus.downloadingGame => "Downloading Game",
+                    LauncherStatus.downloadingUpdate => "Downloading Update",
+                    _ => ""
+                };
 
-                // Update only the TextBlock text of the PlayButton
                 _mainWindow.playButton.Dispatcher.Invoke(() =>
                 {
-                    ((TextBlock)((Grid)_mainWindow.playButton.Content).Children[1]).Text = buttonText;
+                    ((TextBlock)((Grid)_mainWindow.playButton.Content).Children[1]).Text = text;
                 });
             }
         }
